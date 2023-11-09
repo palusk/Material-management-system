@@ -2,11 +2,11 @@ package project;
 
 import java.util.ArrayList;
 
-public class ImporterExcela {
+public class ImporterExcel {
 
     private static String excel_File;
 
-    public ImporterExcela(String excel_File){
+    public ImporterExcel(String excel_File){
         this.excel_File = excel_File;
     }
 

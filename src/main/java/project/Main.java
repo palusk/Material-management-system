@@ -5,6 +5,6 @@ public class Main {
         System.out.println("Hello world!");
 
 
-        ImporterExcela object = new ImporterExcela();
+        ImporterExcel object = new ImporterExcel();
     }
 }

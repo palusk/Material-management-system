@@ -17,6 +17,8 @@ public class Main {
             System.out.println();
         }
 
+        object.insertToStaging(csvFile);
+
 
     }
 }

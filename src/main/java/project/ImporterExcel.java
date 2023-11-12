@@ -1,18 +1,41 @@
 package project;
 
+import com.opencsv.CSVReader;
+import com.opencsv.exceptions.CsvValidationException;
+
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+
 
 public class ImporterExcel {
 
-    private static String excel_File;
+    public ImporterExcel() {}
 
-    public ImporterExcel(String excel_File){
-        this.excel_File = excel_File;
+    public List<String[]> csvReader(String csvFile){
+        List<String[]> dataList = new ArrayList<>();
+
+        try (CSVReader reader = new CSVReader(new FileReader(csvFile))) {
+            String[] line;
+
+            while ((line = reader.readNext()) != null) {
+                dataList.add(line);
+            }
+        } catch (IOException | CsvValidationException e) {
+            e.printStackTrace();
+        }
+
+        return dataList;
     }
+
+
+
+
 
     public String loadCSV() {return new String();}    // załadowanie CSV z komputera
 
-    public ArrayList formatCSV(String raw_CSV){}      // sformatowanie CSV, czyli z Stringa na Liste
+   // public ArrayList formatCSV(String raw_CSV){}      // sformatowanie CSV, czyli z Stringa na Liste
 
     public boolean insertToStaging() {return true;}   //wyslanie do tabeli staging oraz uruchomienie procedury walidacji
 

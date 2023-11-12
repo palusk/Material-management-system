@@ -13,7 +13,7 @@ public class ImporterExcel {
 
     public ImporterExcel() {}
 
-    public List<String[]> csvReader(String csvFile){
+    public List<String[]> csvReader(String csvFile) {
         List<String[]> dataList = new ArrayList<>();
 
         try (CSVReader reader = new CSVReader(new FileReader(csvFile))) {
@@ -25,17 +25,18 @@ public class ImporterExcel {
         } catch (IOException | CsvValidationException e) {
             e.printStackTrace();
         }
-
         return dataList;
-    }
-
-
+        }
 
 
 
     public String loadCSV() {return new String();}    // załadowanie CSV z komputera
 
+
    // public ArrayList formatCSV(String raw_CSV){}      // sformatowanie CSV, czyli z Stringa na Liste
+
+    public ArrayList formatCSV(String raw_CSV){return null;}      // sformatowanie CSV, czyli z Stringa na Liste
+
 
     public boolean insertToStaging() {return true;}   //wyslanie do tabeli staging oraz uruchomienie procedury walidacji
 

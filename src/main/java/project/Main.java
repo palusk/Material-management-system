@@ -1,24 +1,16 @@
 package project;
 
+import java.sql.SQLException;
 import java.util.List;
 
 public class Main {
-    public static void main(String[] args) {
-
-        String csvFile = "D:/Program Files/IdeaProjects/Material-management-system/src/main/java/project/csvFile/delivery.csv";
-
-        ImporterExcel object = new ImporterExcel();
-        List<String[]> dataList = object.csvReader(csvFile);
-
-        for (String[] row : dataList) {
-            for (String value : row) {
-                System.out.print(value + "\t");
-            }
-            System.out.println();
-        }
-
-        object.insertToStaging(csvFile);
+    public static void main(String[] args) throws SQLException {
 
 
+        ProductsLoader productsLoader = new ProductsLoader();
+        String csvFile = "C:\\Users\\mateu\\IdeaProjects\\Material-management-system\\src\\main\\java\\project\\csvFile\\delivery.csv";
+
+        System.out.println(productsLoader.loadProductsFromCSV(csvFile));
+        System.out.println(productsLoader.getStagingErrors());
     }
 }

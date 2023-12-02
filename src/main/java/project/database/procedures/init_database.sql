@@ -63,7 +63,7 @@ BEGIN
                                                   quantity INT,
                                                   warehouse_id INT,
                                                   expiration_date DATE,
-                                                  PRIMARY KEY (product_id, warehouse_id),
+                                                  PRIMARY KEY (product_id, warehouse_id, expiration_date),
                                                   FOREIGN KEY (product_id) REFERENCES products(product_id),
                                                   FOREIGN KEY (warehouse_id) REFERENCES warehouses(warehouse_id)
     );
@@ -76,9 +76,7 @@ BEGIN
                                                           expiration_date DATE,
                                                           load_status ENUM('Pending', 'Processed', 'Error') DEFAULT 'Pending',
                                                           load_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                                                          error_message VARCHAR(255),
-                                                          FOREIGN KEY (product_id) REFERENCES products(product_id),
-                                                          FOREIGN KEY (warehouse_id) REFERENCES warehouses(warehouse_id)
+                                                          error_message VARCHAR(255)
     );
 
 END //

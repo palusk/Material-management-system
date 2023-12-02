@@ -12,6 +12,10 @@ public class Connector {
     private static final String pwd = "password";
     Connection con;
 
+    public Connection getCon() {
+        return con;
+    }
+
     public Connector() {
         try {
             this.con = DriverManager.getConnection(url,user,pwd);
@@ -22,7 +26,7 @@ public class Connector {
 
     public boolean importCSV(String csvFile){
 
-        String sqlStatement = "LOAD DATA LOCAL INFILE ? INTO TABLE staging " +
+        String sqlStatement = "LOAD DATA LOCAL INFILE ? INTO TABLE staging_products_in_stock " +
                 "FIELDS TERMINATED BY ';' " +
                 "LINES TERMINATED BY '\r\n' " +
                 "IGNORE 1 LINES " +

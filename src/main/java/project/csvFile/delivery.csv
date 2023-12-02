@@ -1,6 +1,5 @@
-order_id;status_id;order_date;warehouse_name;quantity;product_name
-1;1;2023-11-12;Raw Materials Warehouse;5000;Cocoa Beans
-2;2;2023-11-13;Sugar Warehouse;3000;Refined Sugar
-3;1;2023-11-15;Milk Warehouse;2000;Condensed Milk
-4;3;2023-11-18;Nuts Warehouse;1000;Hazelnuts
-5;2;2023-11-20;Flavorings Warehouse;800;Vanilla Extract
+product_id;quantity;warehouse_id;expiration_date
+1;1;1;2023-11-12
+5;1;2;2023-11-13
+1;2;5;2023-11-12
+4;2;5;2023-11-12

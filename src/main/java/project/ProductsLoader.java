@@ -104,5 +104,49 @@ public class ProductsLoader {
 
         return result.toString();
     }
+
+    public static void clearStaging() {
+        String storedProcedureCall = "{call DeleteAllStagingRows()}";
+        try (CallableStatement callableStatement = database.getCon().prepareCall(storedProcedureCall)) {
+            callableStatement.execute();
+            System.out.println("staging cleared");
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+    }
+
+    public String getStagingTable() {
+        StringBuilder result = new StringBuilder();
+
+        String callProcedure = "{CALL GetStagingTable()}";
+        try (CallableStatement callableStatement = database.getCon().prepareCall(callProcedure)) {
+            try (ResultSet resultSet = callableStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    int stagingId = resultSet.getInt("staging_id");
+                    int productId = resultSet.getInt("product_id");
+                    int quantity = resultSet.getInt("quantity");
+                    int warehouseId = resultSet.getInt("warehouse_id");
+                    String expirationdate = resultSet.getString("expiration_date");
+                    String errorMessage = resultSet.getString("error_message");
+                    Timestamp loadTimestamp = resultSet.getTimestamp("load_timestamp");
+
+                    result.append("Staging ID: ").append(stagingId)
+                            .append(", Product Id: ").append(productId)
+                            .append(", Quantity: ").append(quantity)
+                            .append(", Warehouse Id: ").append(warehouseId)
+                            .append(", Expiration date: ").append(expirationdate)
+                            .append(", Error Message: ").append(errorMessage)
+                            .append(", Load Timestamp: ").append(loadTimestamp)
+                            .append("\n");
+                }
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return result.toString();
+    }
 }
 

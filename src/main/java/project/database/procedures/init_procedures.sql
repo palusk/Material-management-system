@@ -543,4 +543,11 @@ BEGIN
     ORDER BY load_timestamp;
 END //
 
+CREATE OR REPLACE PROCEDURE GetStagingTable()
+BEGIN
+    SELECT *
+    FROM staging_products_in_stock
+    ORDER BY load_timestamp;
+END //
+
 DELIMITER ;

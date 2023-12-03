@@ -6,6 +6,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import project.HierarchyManager;
 import project.ProductsLoader;
 
 import java.io.File;
@@ -24,6 +25,7 @@ public class ResourcesManagementApplication extends Application {
     public void start(Stage primaryStage) {
         primaryStage.setTitle("JavaFX App");
         ProductsLoader productsLoader = new ProductsLoader();
+        HierarchyManager hierarchyManager = new HierarchyManager();
         FileChooser fileChooser = new FileChooser();
 
         fileChooser.getExtensionFilters().addAll(
@@ -37,8 +39,8 @@ public class ResourcesManagementApplication extends Application {
 
         resultLabel = new Label();
 
-        Button loadButton = new Button("Load data");
-        loadButton.setOnAction(e -> {
+        Button loadProductData = new Button("Load Product data");
+        loadProductData.setOnAction(e -> {
             if (selectedFile != null) {
                 try {
                     String result = productsLoader.loadProductsFromCSV(selectedFile.getAbsolutePath());
@@ -71,10 +73,30 @@ public class ResourcesManagementApplication extends Application {
             resultLabel.setText(stagingTable);
         });
 
-        VBox vBox = new VBox(selectCSVButton, loadButton,errorsButton, clearStagingButton, showStagingTableButton, resultLabel);
+
+
+        Button loadEmployeeButton = new Button("Load employee data");
+        loadEmployeeButton.setOnAction(e -> {
+            System.out.println("test");
+            if (selectedFile != null) {
+                try {
+                    System.out.println("test");
+                    String result = hierarchyManager.loadEmployeesFromCSV(selectedFile.getAbsolutePath());
+                    System.out.println(result);
+                    resultLabel.setText("Load Data Result: " + result);
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+            } else {
+                resultLabel.setText("Please select a CSV file first.");
+            }
+        });
+
+        VBox vBox = new VBox(selectCSVButton, loadProductData,errorsButton, clearStagingButton, showStagingTableButton, loadEmployeeButton, resultLabel);
         Scene scene = new Scene(vBox, 960, 600);
 
         primaryStage.setScene(scene);
         primaryStage.show();
+
     }
 }

@@ -79,6 +79,18 @@ BEGIN
                                                           error_message VARCHAR(255)
     );
 
+    CREATE OR REPLACE TABLE staging_employees (
+                                                  staging_id INT AUTO_INCREMENT PRIMARY KEY,
+                                                  first_name VARCHAR(50) NOT NULL,
+                                                  last_name VARCHAR(50) NOT NULL,
+                                                  email VARCHAR(100) NOT NULL,
+                                                  position VARCHAR(50),
+                                                  warehouse_id INT,
+                                                  load_status ENUM('Pending', 'Processed', 'Error') DEFAULT 'Pending',
+                                                  load_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                                                  error_message VARCHAR(255)
+    );
+
 END //
 
 DELIMITER ;

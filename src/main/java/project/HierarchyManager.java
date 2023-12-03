@@ -8,18 +8,17 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
 
-public class ProductsLoader {
-
+public class HierarchyManager {
     private static Connector database = new Connector();
-    private static ExcelImporter importer = new ExcelImporter();
+    static ExcelImporter importer = new ExcelImporter();
 
-    public static String loadProductsFromCSV(String csvFile) throws SQLException {
+    public static String loadEmployeesFromCSV(String csvFile) throws SQLException {
         try {
             List<String> dataList = importer.csvReader(csvFile);
-            String error = ProductsLoader.insertDataIntoStaging(dataList);
+            String error = HierarchyManager.insertDataIntoStaging(dataList);
 
             if (error.isEmpty()) {
-                error = ProductsLoader.triggerValidation();
+                error = HierarchyManager.triggerValidation();
             } else {
                 error = "Load for following rows failed: " + error;
             }
@@ -31,22 +30,22 @@ public class ProductsLoader {
         }
     }
 
-    public static String insertDataIntoStaging(List<String> inputString) throws SQLException {
+    private static String insertDataIntoStaging(List<String> inputString) {
         String failedRows = "";
         Integer rowNumber = 0;
-        String sqlQuery = "{call InsertStagingProductInStock(?, ?, ?, ?)}";
+        String sqlQuery = "{call InsertStagingEmployees(?, ?, ?, ?, ?)}";
 
         try (CallableStatement callableStatement = database.getCon().prepareCall(sqlQuery)) {
             for (String line : inputString) {
                 if (!line.trim().isEmpty()) {
                     String[] columns = line.split(";");
-                    if (columns.length == 4) {
+                    if (columns.length == 5) {
                         try {
-                            callableStatement.setInt(1, Integer.parseInt(columns[0]));
-                            callableStatement.setInt(2, Integer.parseInt(columns[1]));
-                            callableStatement.setInt(3, Integer.parseInt(columns[2]));
-                            callableStatement.setDate(4, java.sql.Date.valueOf(columns[3]));
-
+                            callableStatement.setString(1, columns[0]);
+                            callableStatement.setString(2, columns[1]);
+                            callableStatement.setString(3, columns[2]);
+                            callableStatement.setString(4, columns[3]);
+                            callableStatement.setInt(5, Integer.parseInt(columns[4]));
                             callableStatement.execute();
                             rowNumber++;
                         } catch (NumberFormatException e) {
@@ -69,7 +68,7 @@ public class ProductsLoader {
     }
 
     public static String triggerValidation() {
-        String storedProcedureCall = "{call ProcessPendingRowsInProductStaging()}";
+        String storedProcedureCall = "{call ProcessPendingRowsInEmployees()}";
         try (CallableStatement callableStatement = database.getCon().prepareCall(storedProcedureCall)) {
             callableStatement.execute();
             return "Load successful check staging table for errors";
@@ -148,6 +147,4 @@ public class ProductsLoader {
 
         return result.toString();
     }
-
 }
-

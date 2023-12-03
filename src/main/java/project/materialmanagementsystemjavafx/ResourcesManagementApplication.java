@@ -54,26 +54,54 @@ public class ResourcesManagementApplication extends Application {
             }
         });
 
-        Button errorsButton = new Button("Get Staging Errors");
-        errorsButton.setOnAction(e -> {
+        Button getProductStagingErrorsButton = new Button("Get Staging Errors");
+        getProductStagingErrorsButton.setOnAction(e -> {
             String stagingErrors = productsLoader.getStagingErrors();
             System.out.println(stagingErrors);
             resultLabel.setText("Staging Errors: " + stagingErrors);
         });
 
-        Button clearStagingButton = new Button("Clear Staging");
-        clearStagingButton.setOnAction(e -> {
+        Button clearProductStagingButton = new Button("Clear Staging");
+        clearProductStagingButton.setOnAction(e -> {
             productsLoader.clearStaging();
             resultLabel.setText("Staging cleared");
         });
 
-        Button showStagingTableButton = new Button("Show Staging table");
-        showStagingTableButton.setOnAction(e -> {
+        Button showProductStagingTableButton = new Button("Show Product Staging table");
+        showProductStagingTableButton.setOnAction(e -> {
             String stagingTable = productsLoader.getStagingTable();
             resultLabel.setText(stagingTable);
         });
 
+        Button refreshHierarchyButton = new Button("Refresh hierarchy");
+        refreshHierarchyButton.setOnAction(e -> {
+            String stagingTable = hierarchyManager.refreshHierarchy();
+            resultLabel.setText(stagingTable);
+        });
 
+        Button getEmployeesStagingTableButton = new Button("Show Employees Staging table");
+        getEmployeesStagingTableButton.setOnAction(e -> {
+            String stagingTable = hierarchyManager.getStagingTable();
+            resultLabel.setText(stagingTable);
+        });
+
+        Button clearEmployeesStagingButton = new Button("Clear Employees Staging table");
+        clearEmployeesStagingButton.setOnAction(e -> {
+            String stagingTable = hierarchyManager.clearStaging();
+            resultLabel.setText(stagingTable);
+        });
+
+        Button getEmployeesStagingErrorsButton = new Button("Show Employees Staging Errors");
+        getEmployeesStagingErrorsButton.setOnAction(e -> {
+            String stagingTable = hierarchyManager.getStagingErrors();
+            resultLabel.setText(stagingTable);
+        });
+
+        Button getHierarchyButton = new Button("Show Hierarchy");
+        getHierarchyButton.setOnAction(e -> {
+            String stagingTable = hierarchyManager.getHierarchy();
+            resultLabel.setText(stagingTable);
+        });
 
         Button loadEmployeeButton = new Button("Load employee data");
         loadEmployeeButton.setOnAction(e -> {
@@ -92,7 +120,9 @@ public class ResourcesManagementApplication extends Application {
             }
         });
 
-        VBox vBox = new VBox(selectCSVButton, loadProductData,errorsButton, clearStagingButton, showStagingTableButton, loadEmployeeButton, resultLabel);
+        VBox vBox = new VBox(selectCSVButton, loadProductData,getProductStagingErrorsButton, clearProductStagingButton,
+                showProductStagingTableButton, loadEmployeeButton, refreshHierarchyButton, getEmployeesStagingTableButton,
+                clearEmployeesStagingButton, getEmployeesStagingErrorsButton, getHierarchyButton, resultLabel);
         Scene scene = new Scene(vBox, 960, 600);
 
         primaryStage.setScene(scene);

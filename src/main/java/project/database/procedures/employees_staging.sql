@@ -132,4 +132,24 @@ BEGIN
     COMMIT;
 END //
 
+CREATE OR REPLACE PROCEDURE GetEmployeesStagingErrors()
+BEGIN
+    SELECT *
+    FROM staging_employees
+    WHERE load_status = 'Error'
+    ORDER BY load_timestamp;
+END //
+
+CREATE OR REPLACE PROCEDURE DeleteAllEmployeesStagingRows()
+BEGIN
+    DELETE FROM staging_employees;
+END //
+
+CREATE OR REPLACE PROCEDURE GetEmployeesStagingTable()
+BEGIN
+    SELECT *
+    FROM staging_employees
+    ORDER BY load_timestamp;
+END //
+
 DELIMITER ;

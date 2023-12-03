@@ -81,7 +81,7 @@ public class HierarchyManager {
     public String getStagingErrors() {
         StringBuilder result = new StringBuilder();
 
-        String callProcedure = "{CALL GetProductStagingErrors()}";
+        String callProcedure = "{CALL GetEmployeesStagingErrors()}";
         try (CallableStatement callableStatement = database.getCon().prepareCall(callProcedure)) {
             try (ResultSet resultSet = callableStatement.executeQuery()) {
                 while (resultSet.next()) {
@@ -104,38 +104,82 @@ public class HierarchyManager {
         return result.toString();
     }
 
-    public static void clearStaging() {
-        String storedProcedureCall = "{call DeleteAllProductStagingRows()}";
+    public static String clearStaging() {
+        String storedProcedureCall = "{call DeleteAllEmployeesStagingRows()}";
         try (CallableStatement callableStatement = database.getCon().prepareCall(storedProcedureCall)) {
             callableStatement.execute();
-            System.out.println("staging cleared");
+            return "staging cleared";
         } catch (SQLException e) {
-            System.out.println(e);
+            return "Staging clear failed";
         }
     }
 
     public String getStagingTable() {
         StringBuilder result = new StringBuilder();
 
-        String callProcedure = "{CALL GetProductStagingTable()}";
+        String callProcedure = "{CALL GetEmployeesStagingTable()}";
         try (CallableStatement callableStatement = database.getCon().prepareCall(callProcedure)) {
             try (ResultSet resultSet = callableStatement.executeQuery()) {
                 while (resultSet.next()) {
                     int stagingId = resultSet.getInt("staging_id");
-                    int productId = resultSet.getInt("product_id");
-                    int quantity = resultSet.getInt("quantity");
-                    int warehouseId = resultSet.getInt("warehouse_id");
-                    String expirationdate = resultSet.getString("expiration_date");
-                    String errorMessage = resultSet.getString("error_message");
-                    Timestamp loadTimestamp = resultSet.getTimestamp("load_timestamp");
+                    String first_name = resultSet.getString("first_name");
+                    String last_name = resultSet.getString("last_name");
+                    String email = resultSet.getString("email");
+                    String position = resultSet.getString("position");
+                    int warehouse_id = resultSet.getInt("warehouse_id");
+                    String load_status = resultSet.getString("load_status");
+                    String error_message = resultSet.getString("error_message");
+                    Timestamp load_timestamp = resultSet.getTimestamp("load_timestamp");
+
 
                     result.append("Staging ID: ").append(stagingId)
-                            .append(", Product Id: ").append(productId)
-                            .append(", Quantity: ").append(quantity)
-                            .append(", Warehouse Id: ").append(warehouseId)
-                            .append(", Expiration date: ").append(expirationdate)
-                            .append(", Error Message: ").append(errorMessage)
-                            .append(", Load Timestamp: ").append(loadTimestamp)
+                            .append(", First name: ").append(first_name)
+                            .append(", last name: ").append(last_name)
+                            .append(", Email: ").append(email)
+                            .append(", Position: ").append(position)
+                            .append(", Warehouse ID: ").append(warehouse_id)
+                            .append(", Load status: ").append(load_status)
+                            .append(", Error message: ").append(error_message)
+                            .append(", Load Timestamp: ").append(load_timestamp)
+                            .append("\n");
+                }
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return result.toString();
+    }
+
+    public static String refreshHierarchy() {
+        String storedProcedureCall = "{call CalculateEmployeeHierarchy()}";
+        try (CallableStatement callableStatement = database.getCon().prepareCall(storedProcedureCall)) {
+            callableStatement.execute();
+            return "Hierarchy refreshed";
+        } catch (SQLException e) {
+            return "Refresh failed";
+        }
+    }
+
+    public String getHierarchy() {
+        StringBuilder result = new StringBuilder();
+
+        String callProcedure = "{CALL getHierarchy()}";
+        try (CallableStatement callableStatement = database.getCon().prepareCall(callProcedure)) {
+            try (ResultSet resultSet = callableStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    int employee_id = resultSet.getInt("employee_id");
+                    int descendant_id = resultSet.getInt("descendant_id");
+                    int level = resultSet.getInt("level");
+                    int warehouse_id = resultSet.getInt("warehouse_id");
+
+
+                    result.append("Employee ID: ").append(employee_id)
+                            .append(", Descendant ID: ").append(descendant_id)
+                            .append(", Level: ").append(level)
+                            .append(", Warehouse ID: ").append(warehouse_id)
                             .append("\n");
                 }
             } catch (SQLException ex) {

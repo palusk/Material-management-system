@@ -16,6 +16,7 @@ BEGIN
                                           email VARCHAR(100) NOT NULL,
                                           position VARCHAR(50),
                                           warehouse_id INT,
+                                          reports_to INT,
                                           FOREIGN KEY (warehouse_id) REFERENCES warehouses(warehouse_id)
     );
 
@@ -89,6 +90,15 @@ BEGIN
                                                   load_status ENUM('Pending', 'Processed', 'Error') DEFAULT 'Pending',
                                                   load_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                                                   error_message VARCHAR(255)
+    );
+
+    CREATE OR REPLACE TABLE employee_hierarchy (
+                                                   employee_id INT,
+                                                   descendant_id INT,
+                                                   level INT,
+                                                   warehouse_id INT,
+                                                   PRIMARY KEY (employee_id, descendant_id),
+                                                   FOREIGN KEY (descendant_id) REFERENCES employees(employee_id)
     );
 
 END //

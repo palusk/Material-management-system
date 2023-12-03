@@ -101,6 +101,26 @@ BEGIN
                                                    FOREIGN KEY (descendant_id) REFERENCES employees(employee_id)
     );
 
+    CREATE OR REPLACE TABLE profiles (
+                                         profile_id INT PRIMARY KEY,
+                                         profile_name VARCHAR(50) NOT NULL
+    );
+
+    INSERT INTO profiles (profile_id, profile_name)
+    VALUES
+        (0, 'Manager'),
+        (1, 'Supervisor'),
+        (2, 'Senior Worker'),
+        (3, 'Worker');
+
+    CREATE OR REPLACE TABLE users_profiles (
+                                               profile_id INT,
+                                               employee_id INT,
+                                               PRIMARY KEY (profile_id, employee_id),
+                                               FOREIGN KEY (employee_id) REFERENCES employees(employee_id),
+                                               FOREIGN KEY (profile_id) REFERENCES profiles(profile_id)
+    );
+
 END //
 
 DELIMITER ;

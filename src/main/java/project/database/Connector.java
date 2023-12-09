@@ -24,25 +24,6 @@ public class Connector {
         }
     }
 
-    public boolean importCSV(String csvFile){
 
-        String sqlStatement = "LOAD DATA LOCAL INFILE ? INTO TABLE staging_products_in_stock " +
-                "FIELDS TERMINATED BY ';' " +
-                "LINES TERMINATED BY '\r\n' " +
-                "IGNORE 1 LINES " +
-                "(order_id, status_id, order_date, warehouse_name, quantity, product_name)";
-
-        try (PreparedStatement preparedStatement = con.prepareStatement(sqlStatement)) {
-            preparedStatement.setString(1, csvFile);
-            preparedStatement.execute();
-            return true;
-        } catch (SQLException e) {
-        e.printStackTrace();
-        return false;
-    }
-    }
-
-
-    public void validation(){}
 
 }

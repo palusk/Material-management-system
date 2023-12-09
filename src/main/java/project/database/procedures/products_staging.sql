@@ -70,8 +70,7 @@ BEGIN
     INSERT INTO products_in_stock (product_id, quantity, warehouse_id, expiration_date)
     VALUES (p_product_id, p_quantity, p_warehouse_id, p_expiration_date)
     ON DUPLICATE KEY UPDATE
-                         quantity = VALUES(quantity) + quantity,
-                         expiration_date = VALUES(expiration_date);
+                         quantity = VALUES(quantity) + quantity;
 END //
 
 CREATE OR REPLACE PROCEDURE LoadRowIntoProductsInStock(

@@ -45,7 +45,7 @@ END //
 
 CREATE OR REPLACE PROCEDURE updateProfiles()
 BEGIN
-    -- Aktualizuj istniejące profile
+    -- Aktualizuj istniejące profile lub przypisz profil dla pracowników, dla których jeszcze nie przypisano żadnego profilu
     INSERT INTO users_profiles (employee_id, profile_id)
     SELECT
         eh.employee_id,
@@ -54,19 +54,9 @@ BEGIN
         employee_hierarchy eh
     WHERE
         eh.employee_id IS NOT NULL
+        AND eh.employee_id NOT IN (SELECT eh.employee_id FROM employee_hierarchy eh WHERE eh.descendant_id = -2) -- wykluczenie sierot(pracowników bez przełożonego)
     ON DUPLICATE KEY UPDATE
         profile_id = LEAST(VALUES(profile_id), 3);
-
-    -- Przypisz profil dla pracowników, dla których jeszcze nie przypisano żadnego profilu
-    INSERT INTO users_profiles (employee_id, profile_id)
-    SELECT
-        eh.employee_id,
-        LEAST(eh.level, 3) AS profile_id
-    FROM
-        employee_hierarchy eh
-    WHERE
-        eh.employee_id IS NOT NULL
-      AND eh.employee_id NOT IN (SELECT employee_id FROM users_profiles);
 
     -- Usuń profile, które nie mają odpowiedniego rekordu w employees_hierarchy
     DELETE up

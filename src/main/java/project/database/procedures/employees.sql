@@ -71,10 +71,12 @@ BEGIN
         -- Dodaj rekordy do tabeli hierarchii na kolejnych poziomach dla danego warehouse_id
         REPEAT
             INSERT IGNORE INTO employee_hierarchy (warehouse_id, employee_id, descendant_id, level)
-            SELECT warehouseId, e.employee_id, COALESCE(eh.descendant_id, e.employee_id), (maxLevel + 1)
+            SELECT warehouseId,e.employee_id,
+                   IF(eh.descendant_id IS NULL, -2, eh.descendant_id),(maxLevel + 1)
             FROM employees e
                      LEFT JOIN employee_hierarchy eh ON e.reports_to = eh.employee_id AND eh.level = maxLevel
-            WHERE e.warehouse_id = warehouseId;
+            WHERE e.warehouse_id = warehouseId
+                AND e.reports_to != -1;
 
             SET maxLevel = maxLevel + 1;
         UNTIL ROW_COUNT() = 0 END REPEAT;

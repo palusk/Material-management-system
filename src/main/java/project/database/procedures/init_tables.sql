@@ -16,6 +16,7 @@ BEGIN
                                           email VARCHAR(100) NOT NULL,
                                           position VARCHAR(50),
                                           warehouse_id INT,
+                                          reports_to INT,
                                           FOREIGN KEY (warehouse_id) REFERENCES warehouses(warehouse_id)
     );
 
@@ -77,6 +78,47 @@ BEGIN
                                                           load_status ENUM('Pending', 'Processed', 'Error') DEFAULT 'Pending',
                                                           load_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                                                           error_message VARCHAR(255)
+    );
+
+    CREATE OR REPLACE TABLE staging_employees (
+                                                  staging_id INT AUTO_INCREMENT PRIMARY KEY,
+                                                  first_name VARCHAR(50) NOT NULL,
+                                                  last_name VARCHAR(50) NOT NULL,
+                                                  email VARCHAR(100) NOT NULL,
+                                                  position VARCHAR(50),
+                                                  warehouse_id INT,
+                                                  load_status ENUM('Pending', 'Processed', 'Error') DEFAULT 'Pending',
+                                                  load_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                                                  error_message VARCHAR(255)
+    );
+
+    CREATE OR REPLACE TABLE employee_hierarchy (
+                                                   employee_id INT,
+                                                   descendant_id INT,
+                                                   level INT,
+                                                   warehouse_id INT,
+                                                   PRIMARY KEY (employee_id, descendant_id),
+                                                   FOREIGN KEY (descendant_id) REFERENCES employees(employee_id)
+    );
+
+    CREATE OR REPLACE TABLE profiles (
+                                         profile_id INT PRIMARY KEY,
+                                         profile_name VARCHAR(50) NOT NULL
+    );
+
+    INSERT INTO profiles (profile_id, profile_name)
+    VALUES
+        (0, 'Manager'),
+        (1, 'Supervisor'),
+        (2, 'Senior Worker'),
+        (3, 'Worker');
+
+    CREATE OR REPLACE TABLE users_profiles (
+                                               profile_id INT,
+                                               employee_id INT,
+                                               PRIMARY KEY (profile_id, employee_id),
+                                               FOREIGN KEY (employee_id) REFERENCES employees(employee_id),
+                                               FOREIGN KEY (profile_id) REFERENCES profiles(profile_id)
     );
 
 END //

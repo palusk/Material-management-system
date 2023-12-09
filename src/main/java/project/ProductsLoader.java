@@ -40,7 +40,7 @@ public class ProductsLoader {
             for (String line : inputString) {
                 if (!line.trim().isEmpty()) {
                     String[] columns = line.split(";");
-                    if (columns.length >= 4) {
+                    if (columns.length == 4) {
                         try {
                             callableStatement.setInt(1, Integer.parseInt(columns[0]));
                             callableStatement.setInt(2, Integer.parseInt(columns[1]));
@@ -69,7 +69,7 @@ public class ProductsLoader {
     }
 
     public static String triggerValidation() {
-        String storedProcedureCall = "{call ProcessPendingRowsInStaging()}";
+        String storedProcedureCall = "{call ProcessPendingRowsInProductStaging()}";
         try (CallableStatement callableStatement = database.getCon().prepareCall(storedProcedureCall)) {
             callableStatement.execute();
             return "Load successful check staging table for errors";
@@ -82,7 +82,7 @@ public class ProductsLoader {
     public String getStagingErrors() {
         StringBuilder result = new StringBuilder();
 
-        String callProcedure = "{CALL GetStagingErrorsSortedByTimestamp()}";
+        String callProcedure = "{CALL GetProductStagingErrors()}";
         try (CallableStatement callableStatement = database.getCon().prepareCall(callProcedure)) {
             try (ResultSet resultSet = callableStatement.executeQuery()) {
                 while (resultSet.next()) {
@@ -104,5 +104,50 @@ public class ProductsLoader {
 
         return result.toString();
     }
+
+    public static void clearStaging() {
+        String storedProcedureCall = "{call DeleteAllProductStagingRows()}";
+        try (CallableStatement callableStatement = database.getCon().prepareCall(storedProcedureCall)) {
+            callableStatement.execute();
+            System.out.println("staging cleared");
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+    }
+
+    public String getStagingTable() {
+        StringBuilder result = new StringBuilder();
+
+        String callProcedure = "{CALL GetProductStagingTable()}";
+        try (CallableStatement callableStatement = database.getCon().prepareCall(callProcedure)) {
+            try (ResultSet resultSet = callableStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    int stagingId = resultSet.getInt("staging_id");
+                    int productId = resultSet.getInt("product_id");
+                    int quantity = resultSet.getInt("quantity");
+                    int warehouseId = resultSet.getInt("warehouse_id");
+                    String expirationdate = resultSet.getString("expiration_date");
+                    String errorMessage = resultSet.getString("error_message");
+                    Timestamp loadTimestamp = resultSet.getTimestamp("load_timestamp");
+
+                    result.append("Staging ID: ").append(stagingId)
+                            .append(", Product Id: ").append(productId)
+                            .append(", Quantity: ").append(quantity)
+                            .append(", Warehouse Id: ").append(warehouseId)
+                            .append(", Expiration date: ").append(expirationdate)
+                            .append(", Error Message: ").append(errorMessage)
+                            .append(", Load Timestamp: ").append(loadTimestamp)
+                            .append("\n");
+                }
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return result.toString();
+    }
+
 }
 

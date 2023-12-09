@@ -21,26 +21,6 @@ public class ProfilesManager {
     }
 
     public String getProfiles() {
-        StringBuilder result = new StringBuilder();
-
-        String callProcedure = "{CALL getProfiles()}";
-        try (CallableStatement callableStatement = database.getCon().prepareCall(callProcedure)) {
-            try (ResultSet resultSet = callableStatement.executeQuery()) {
-                while (resultSet.next()) {
-                    int employee_id = resultSet.getInt("employee_id");
-                    int profile_id = resultSet.getInt("profile_id");
-
-                    result.append("Employee ID: ").append(employee_id)
-                            .append(", Profile ID: ").append(profile_id)
-                            .append("\n");
-                }
-            } catch (SQLException ex) {
-                throw new RuntimeException(ex);
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-        return result.toString();
+        return new Connector().call("getProfiles", null, true);
     }
 }

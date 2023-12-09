@@ -2,7 +2,7 @@ DELIMITER //
 
 CREATE OR REPLACE PROCEDURE GetAllUsersWithDetails()
 BEGIN
-    SELECT u.user_id, u.username, e.first_name, e.last_name, e.email, e.position, w.warehouse_name
+    SELECT u.user_id, e.first_name, e.last_name, e.email, e.position, w.warehouse_name
     FROM users u
              JOIN employees e ON u.employee_id = e.employee_id
              JOIN warehouses w ON e.warehouse_id = w.warehouse_id;
@@ -35,10 +35,9 @@ CREATE OR REPLACE PROCEDURE InsertOrUpdateUser(
     IN p_password_hash VARCHAR(255)
 )
 BEGIN
-    INSERT INTO users (employee_id, username, email, password_hash)
+    INSERT INTO users (employee_id, email, password_hash)
     VALUES (p_employee_id, p_username, p_email, p_password_hash)
     ON DUPLICATE KEY UPDATE
-                         username = VALUES(username),
                          email = VALUES(email),
                          password_hash = VALUES(password_hash);
 END //
@@ -46,10 +45,10 @@ END //
 CREATE OR REPLACE PROCEDURE updateProfiles()
 BEGIN
     -- Aktualizuj istniejące profile lub przypisz profil dla pracowników, dla których jeszcze nie przypisano żadnego profilu
-    INSERT INTO users_profiles (employee_id, profile_id)
+    INSERT INTO users_profiles (profile_id, user_id)
     SELECT
-        eh.employee_id,
-        LEAST(eh.level, 3) AS profile_id
+        LEAST(eh.level, 3) AS profile_id,
+        eh.employee_id
     FROM
         employee_hierarchy eh
     WHERE
@@ -62,8 +61,8 @@ BEGIN
     DELETE up
     FROM
         users_profiles up
-            LEFT JOIN
-        employee_hierarchy eh ON up.employee_id = eh.employee_id
+            JOIN users us ON up.user_id = us.user_id
+            LEFT JOIN employee_hierarchy eh ON eh.employee_id = us.user_id
     WHERE
         eh.employee_id IS NULL OR up.profile_id != LEAST(eh.level, 3);
 END //

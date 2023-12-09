@@ -9,6 +9,8 @@ CREATE OR REPLACE PROCEDURE InsertOrUpdateEmployee(
     IN p_warehouse_id INT
 )
 BEGIN
+    DECLARE last_employee_id INT;
+
     INSERT INTO employees (first_name, last_name, email, position, warehouse_id)
     VALUES (p_first_name, p_last_name, p_email, p_position, p_warehouse_id)
     ON DUPLICATE KEY UPDATE
@@ -17,6 +19,20 @@ BEGIN
                          email = VALUES(email),
                          position = VALUES(position),
                          warehouse_id = VALUES(warehouse_id);
+
+    SET last_employee_id = LAST_INSERT_ID();
+
+    INSERT INTO users (employee_id, email, password_hash)
+    VALUES (LAST_INSERT_ID(), p_email, NULL)
+    ON DUPLICATE KEY UPDATE
+                         email = VALUES(email),
+                         password_hash = VALUES(password_hash);
+
+    -- Przypisanie user_id do tabeli employees
+    UPDATE employees e
+    SET user_id = (SELECT u.user_id FROM users u WHERE u.employee_id = last_employee_id)
+    WHERE e.employee_id = last_employee_id;
+
 END //
 
 CREATE OR REPLACE PROCEDURE InsertStagingEmployees(

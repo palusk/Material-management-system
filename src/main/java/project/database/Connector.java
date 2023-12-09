@@ -1,6 +1,7 @@
 package project.database;
 
 import java.sql.*;
+import java.util.List;
 
 public class Connector {
 
@@ -31,7 +32,6 @@ public class Connector {
                 return "ERROR";
             }
         }
-
 
     public static String executeCall(Connection connection, String procedureName,
                                           Object[] input, boolean outputFlag) throws SQLException {
@@ -104,6 +104,26 @@ public class Connector {
         }
 
         return result.toString();
+    }
+
+    public String insertDataIntoStaging(List<String> inputString, String procedureName, int columnsNumber) {
+        String failedRows = "";
+        Integer rowNumber = 0;
+
+        for (String line : inputString) {
+            if (!line.trim().isEmpty()) {
+                String[] columns = line.split(";");
+                if (columns.length == columnsNumber) {
+                    call(procedureName, columns, false);
+                } else {
+                    failedRows += rowNumber + ", ";
+                }
+            } else {
+                failedRows += rowNumber + ", ";
+            }
+            rowNumber++;
+        }
+        return failedRows;
     }
 
 }

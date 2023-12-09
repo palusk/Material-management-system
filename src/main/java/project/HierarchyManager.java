@@ -1,11 +1,6 @@
 package project;
-
 import project.database.Connector;
-
-import java.sql.CallableStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.List;
 
 public class HierarchyManager {
@@ -31,26 +26,7 @@ public class HierarchyManager {
     }
 
     private static String insertDataIntoStaging(List<String> inputString) {
-        String failedRows = "";
-        Integer rowNumber = 0;
-        String sqlQuery = "{call InsertStagingEmployees(?, ?, ?, ?, ?)}";
-
-
-        for (String line : inputString) {
-            if (!line.trim().isEmpty()) {
-                String[] columns = line.split(";");
-                if (columns.length == 5) {
-                    new Connector().call("InsertStagingEmployees", columns, false);
-
-                } else {
-                    failedRows += rowNumber + ", ";
-                }
-            } else {
-                failedRows += rowNumber + ", ";
-            }
-            rowNumber++;
-        }
-        return failedRows;
+        return new Connector().insertDataIntoStaging(inputString,"InsertStagingEmployees",5);
     }
 
     public static String triggerValidation() {

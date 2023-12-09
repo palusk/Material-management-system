@@ -1,11 +1,7 @@
 package project;
 
 import project.database.Connector;
-
-import java.sql.CallableStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.List;
 
 public class ProductsLoader {
@@ -32,28 +28,7 @@ public class ProductsLoader {
     }
 
     public static String insertDataIntoStaging(List<String> inputString) throws SQLException {
-        String failedRows = "";
-        Integer rowNumber = 0;
-            for (String line : inputString) {
-                if (!line.trim().isEmpty()) {
-                    String[] columns = line.split(";");
-                    if (columns.length == 4) {
-                        try {
-                            new Connector().call("InsertStagingProductInStock", columns, false);
-                            rowNumber++;
-                        } catch (NumberFormatException e) {
-                            System.out.println(e);
-                            failedRows += rowNumber + ", ";
-                        }
-                    } else {
-                        failedRows += rowNumber + ", ";
-                    }
-                } else {
-                    failedRows += rowNumber + ", ";
-                }
-                rowNumber++;
-            }
-        return failedRows;
+        return new Connector().insertDataIntoStaging(inputString,"InsertStagingProductInStock",4);
     }
 
     public static String triggerValidation() {

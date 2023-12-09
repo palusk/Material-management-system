@@ -9,6 +9,7 @@ import javafx.stage.Stage;
 import project.HierarchyManager;
 import project.ProductsLoader;
 import project.ProfilesManager;
+import project.database.Connector;
 
 import java.io.File;
 import java.sql.SQLException;

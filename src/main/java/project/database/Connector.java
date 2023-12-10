@@ -22,82 +22,81 @@ public class Connector {
         }
     }
 
-    public String call(String procedureName, Object[] input, boolean outputFlag) {
-            String result;
+    public String callStoredProcedure(String procedureName, Object[] input, boolean outputFlag) {
             try {
-                result = executeCall(getCon(), procedureName, input, outputFlag);
+                String result = executeCall(getCon(), procedureName, input, outputFlag);
+                if(outputFlag == true)
                 return result;
+                else return "No output";
             } catch (SQLException e) {
-                System.out.println(e);
-                return "ERROR";
+                return "An error has occurred please contact your administrator";
             }
         }
 
-    public static String executeCall(Connection connection, String procedureName,
-                                          Object[] input, boolean outputFlag) throws SQLException {
+    public static String executeCall(Connection connection, String procedureName, Object[] input, boolean outputFlag) throws SQLException {
         String result = "No output";
 
-        if(input == null){
+        if (input == null) {
             input = new Object[0];
         }
 
         try (connection) {
-            // Przygotowanie wywołania procedury
-            StringBuilder call = new StringBuilder("{call " + procedureName + "(");
+            String call = buildCallString(procedureName, input.length);
 
-            for (int i = 0; i < input.length; i++) {
-                call.append("?");
-                if (i < input.length - 1) {
-                    call.append(",");
+            try (CallableStatement callableStatement = connection.prepareCall(call)) {
+                setParameters(callableStatement, input);
+
+                callableStatement.execute();
+
+                if (outputFlag) {
+                    result = resultSetToString(callableStatement.getResultSet());
                 }
             }
-
-            call.append(")}");
-
-            CallableStatement callableStatement = connection.prepareCall(call.toString());
-
-            // Ustawienie parametrów wejściowych
-            for (int i = 0; i < input.length; i++) {
-                callableStatement.setObject(i + 1, input[i]);
-            }
-
-            // Wywołanie procedury
-            callableStatement.execute();
-
-            // Pobranie wartości parametrów wyjściowych
-            try{
-            if (outputFlag) {
-                result = resultSetToString(callableStatement.getResultSet());
-            }}catch(Exception e){
-                System.out.println(e);
-            }
-
+        } catch (SQLException e) {
+            return "An error has occurred. Please contact your administrator";
         }
 
         return result;
     }
 
+    private static String buildCallString(String procedureName, int inputLength) {
+        StringBuilder call = new StringBuilder("{call " + procedureName + "(");
+
+        for (int i = 0; i < inputLength; i++) {
+            call.append("?");
+            if (i < inputLength - 1) {
+                call.append(",");
+            }
+        }
+
+        return call.append(")}").toString();
+    }
+
+    private static void setParameters(CallableStatement callableStatement, Object[] input) throws SQLException {
+        for (int i = 0; i < input.length; i++) {
+            callableStatement.setObject(i + 1, input[i]);
+        }
+    }
+
     private static String resultSetToString(ResultSet resultSet) throws SQLException {
+        ResultSetMetaData metaData = resultSet.getMetaData();
+        int columnCount = metaData.getColumnCount();
+
         StringBuilder result = new StringBuilder();
 
-        // Pobieranie metadanych kolumn
-        int columnCount = resultSet.getMetaData().getColumnCount();
-
-        // Dodawanie nagłówków kolumn do wyniku
         for (int i = 1; i <= columnCount; i++) {
-            result.append(resultSet.getMetaData().getColumnName(i));
+            result.append(metaData.getColumnName(i));
             if (i < columnCount) {
-                result.append("\t");
+                result.append(";");
             }
         }
         result.append("\n");
 
-        // Dodawanie danych do wyniku
         while (resultSet.next()) {
             for (int i = 1; i <= columnCount; i++) {
                 result.append(resultSet.getString(i));
                 if (i < columnCount) {
-                    result.append("\t");
+                    result.append(";");
                 }
             }
             result.append("\n");
@@ -107,23 +106,27 @@ public class Connector {
     }
 
     public String insertDataIntoStaging(List<String> inputString, String procedureName, int columnsNumber) {
-        String failedRows = "";
+        StringBuilder failedRows = new StringBuilder();
         Integer rowNumber = 0;
 
         for (String line : inputString) {
             if (!line.trim().isEmpty()) {
                 String[] columns = line.split(";");
                 if (columns.length == columnsNumber) {
-                    call(procedureName, columns, false);
+                    try {
+                        callStoredProcedure(procedureName, columns, false);
+                    } catch (Exception e) {
+                        failedRows.append("Row ").append(rowNumber).append(": ").append(e.getMessage()).append(", ");
+                    }
                 } else {
-                    failedRows += rowNumber + ", ";
+                    failedRows.append("Row ").append(rowNumber).append(": Incorrect number of columns, ");
                 }
             } else {
-                failedRows += rowNumber + ", ";
+                failedRows.append("Row ").append(rowNumber).append(": Empty row, ");
             }
             rowNumber++;
         }
-        return failedRows;
-    }
 
+        return failedRows.toString();
+    }
 }

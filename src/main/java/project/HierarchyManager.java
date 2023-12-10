@@ -30,26 +30,26 @@ public class HierarchyManager {
     }
 
     public static String triggerValidation() {
-        return new Connector().call("ProcessPendingRowsInEmployees", null, false);
+        return new Connector().callStoredProcedure("ProcessPendingRowsInEmployees", null, false);
     }
 
     public String getStagingErrors() {
-        return new Connector().call("GetEmployeesStagingErrors", null, true);
+        return new Connector().callStoredProcedure("GetEmployeesStagingErrors", null, true);
     }
 
     public static String clearStaging() {
-        return new Connector().call("DeleteAllEmployeesStagingRows", null, false);
+        return new Connector().callStoredProcedure("DeleteAllEmployeesStagingRows", null, false);
     }
 
     public String getStagingTable() {
-        return new Connector().call("GetEmployeesStagingTable", null, true);
+        return new Connector().callStoredProcedure("GetEmployeesStagingTable", null, true);
     }
 
     public static String refreshHierarchy() {
-        return new Connector().call("CalculateEmployeeHierarchy", null, false);
+        return new Connector().callStoredProcedure("CalculateEmployeeHierarchy", null, false);
     }
 
     public String getHierarchy() {
-        return new Connector().call("getHierarchy", null, true);
+        return new Connector().callStoredProcedure("getHierarchy", null, true);
     }
 }

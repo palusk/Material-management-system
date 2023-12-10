@@ -32,19 +32,19 @@ public class ProductsLoader {
     }
 
     public static String triggerValidation() {
-        return new Connector().call("ProcessPendingRowsInProductStaging", null, true);
+        return new Connector().callStoredProcedure("ProcessPendingRowsInProductStaging", null, false);
     }
 
     public String getStagingErrors() {
-        return new Connector().call("GetProductStagingErrors", null, true);
+        return new Connector().callStoredProcedure("GetProductStagingErrors", null, true);
     }
 
     public static void clearStaging() {
-        new Connector().call("DeleteAllProductStagingRows", null, false);
+        new Connector().callStoredProcedure("DeleteAllProductStagingRows", null, false);
     }
 
     public String getStagingTable() {
-        return new Connector().call("GetProductStagingTable", null, true);
+        return new Connector().callStoredProcedure("GetProductStagingTable", null, true);
     }
 
 }

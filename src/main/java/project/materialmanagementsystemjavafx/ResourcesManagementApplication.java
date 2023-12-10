@@ -1,6 +1,9 @@
 package project.materialmanagementsystemjavafx;
 
 import javafx.application.Application;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
@@ -9,7 +12,6 @@ import javafx.stage.Stage;
 import project.HierarchyManager;
 import project.ProductsLoader;
 import project.ProfilesManager;
-import project.database.Connector;
 
 import java.io.File;
 import java.sql.SQLException;
@@ -31,6 +33,10 @@ public class ResourcesManagementApplication extends Application {
         HierarchyManager hierarchyManager = new HierarchyManager();
         ProfilesManager profilesManager = new ProfilesManager();
         FileChooser fileChooser = new FileChooser();
+
+        TableView<ObservableList<String>> tableView = new TableView<>();
+        tableView.getItems().clear();
+        tableView.getColumns().clear();
 
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("CSV files (*.csv)", "*.csv")
@@ -75,7 +81,6 @@ public class ResourcesManagementApplication extends Application {
             if (selectedProductsFile != null) {
                 try {
                     String result = productsLoader.loadProductsFromCSV(selectedProductsFile.getAbsolutePath());
-                    System.out.println(result);
                     resultLabel.setText("Load Data Result: " + result);
                 } catch (SQLException ex) {
                     throw new RuntimeException(ex);
@@ -87,8 +92,7 @@ public class ResourcesManagementApplication extends Application {
 
         ((Button)productButtonsVBox.getChildren().get(2)).setOnAction(e -> {
             String stagingErrors = productsLoader.getStagingErrors();
-            System.out.println(stagingErrors);
-            resultLabel.setText("Staging Errors: " + stagingErrors);
+            printTable(stagingErrors,tableView);
         });
 
         ((Button)productButtonsVBox.getChildren().get(3)).setOnAction(e -> {
@@ -98,7 +102,7 @@ public class ResourcesManagementApplication extends Application {
 
         ((Button)productButtonsVBox.getChildren().get(4)).setOnAction(e -> {
             String stagingTable = productsLoader.getStagingTable();
-            resultLabel.setText(stagingTable);
+            printTable(stagingTable,tableView);
         });
 
 
@@ -108,12 +112,9 @@ public class ResourcesManagementApplication extends Application {
         });
 
         ((Button)employeeButtonsVBox.getChildren().get(1)).setOnAction(e -> {
-            System.out.println("test");
             if (selectedEmployeesFile != null) {
                 try {
-                    System.out.println("test");
                     String result = hierarchyManager.loadEmployeesFromCSV(selectedEmployeesFile.getAbsolutePath());
-                    System.out.println(result);
                     resultLabel.setText("Load Data Result: " + result);
                 } catch (SQLException ex) {
                     throw new RuntimeException(ex);
@@ -130,7 +131,7 @@ public class ResourcesManagementApplication extends Application {
 
         ((Button)employeeButtonsVBox.getChildren().get(3)).setOnAction(e -> {
             String stagingTable = hierarchyManager.getStagingTable();
-            resultLabel.setText(stagingTable);
+            printTable(stagingTable,tableView);
         });
 
         ((Button)employeeButtonsVBox.getChildren().get(4)).setOnAction(e -> {
@@ -139,13 +140,13 @@ public class ResourcesManagementApplication extends Application {
         });
 
         ((Button)employeeButtonsVBox.getChildren().get(5)).setOnAction(e -> {
-            String stagingTable = hierarchyManager.getStagingErrors();
-            resultLabel.setText(stagingTable);
+            String stagingErrorsTable = hierarchyManager.getStagingErrors();
+            printTable(stagingErrorsTable,tableView);
         });
 
         ((Button)employeeButtonsVBox.getChildren().get(6)).setOnAction(e -> {
-            String stagingTable = hierarchyManager.getHierarchy();
-            resultLabel.setText(stagingTable);
+            String hierarchyTable = hierarchyManager.getHierarchy();
+            printTable(hierarchyTable,tableView);
         });
 
         ((Button)employeeButtonsVBox.getChildren().get(7)).setOnAction(e -> {
@@ -154,16 +155,63 @@ public class ResourcesManagementApplication extends Application {
         });
 
         ((Button)employeeButtonsVBox.getChildren().get(8)).setOnAction(e -> {
-            String stagingTable = profilesManager.getProfiles();
-            resultLabel.setText(stagingTable);
+            String profilesTable = profilesManager.getProfiles();
+            printTable(profilesTable,tableView);
         });
 
 
         // Utworzenie głównego kontenera
-        VBox mainVBox = new VBox(tabPane, resultLabel);
+        VBox mainVBox = new VBox(tabPane, resultLabel, tableView);
         Scene scene = new Scene(mainVBox, 960, 600);
 
         primaryStage.setScene(scene);
         primaryStage.show();
+    }
+
+    private ObservableList<ObservableList<String>> parseData(String dataString) {
+        ObservableList<ObservableList<String>> data = FXCollections.observableArrayList();
+        String[] rows = dataString.split("\n");
+
+        for (String row : rows) {
+            String[] columns = row.split(";");
+            ObservableList<String> rowData = FXCollections.observableArrayList(columns);
+            data.add(rowData);
+        }
+        return data;
+    }
+
+    private void printTable(String tableData, TableView<ObservableList<String>> tableView) {
+        tableView.getItems().clear();
+        tableView.getColumns().clear();
+        ObservableList<ObservableList<String>> data = parseData(tableData);
+
+        if (data.isEmpty() || data.get(0).isEmpty()) {
+            addNoDataColumn(tableView);
+        } else {
+            for (int i = 0; i < data.get(0).size(); i++) {
+                final int index = i;
+                TableColumn<ObservableList<String>, String> column = new TableColumn<>(data.get(0).get(i));
+
+                column.setCellValueFactory(cellDataFeatures -> {
+                    ObservableList<String> rowValues = cellDataFeatures.getValue();
+                    return new SimpleStringProperty(rowValues.get(index));
+                });
+
+                tableView.getColumns().add(column);
+            }
+
+            data.remove(0);
+
+            tableView.setItems(data);
+        }
+    }
+
+    private void addNoDataColumn(TableView<ObservableList<String>> tableView) {
+        TableColumn<ObservableList<String>, String> column = new TableColumn<>("No Data");
+        column.setCellValueFactory(cellDataFeatures -> new SimpleStringProperty("NO DATA"));
+        tableView.getColumns().add(column);
+
+        // Ustawienie pustego wiersza, aby tekst "NO DATA" został wyświetlony
+        tableView.setItems(FXCollections.emptyObservableList());
     }
 }

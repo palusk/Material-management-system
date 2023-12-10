@@ -36,11 +36,12 @@ CREATE OR REPLACE PROCEDURE InsertOrUpdateUser(
 )
 BEGIN
     INSERT INTO users (employee_id, email, password_hash)
-    VALUES (p_employee_id, p_username, p_email, p_password_hash)
+    VALUES (p_employee_id, p_email, p_password_hash)
     ON DUPLICATE KEY UPDATE
                          email = VALUES(email),
                          password_hash = VALUES(password_hash);
 END //
+
 
 CREATE OR REPLACE PROCEDURE updateProfiles()
 BEGIN
@@ -66,6 +67,7 @@ BEGIN
     WHERE
         eh.employee_id IS NULL OR up.profile_id != LEAST(eh.level, 3);
 END //
+
 
 CREATE OR REPLACE PROCEDURE getProfiles()
 BEGIN

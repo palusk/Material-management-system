@@ -46,6 +46,7 @@ public class LoginPage extends Application {
             boolean isValid = authenticate(usernameInput.getText(), passwordInput.getText());
             if (isValid) {
                 System.out.println("Login successful!");
+                openMainPanel(primaryStage); // Przełącz do głównego panelu po zalogowaniu
             } else {
                 System.out.println("Login failed. Please check your credentials.");
             }
@@ -59,6 +60,13 @@ public class LoginPage extends Application {
         primaryStage.show();
     }
 
+    // Dodane: Metoda otwierająca główny panel
+    private void openMainPanel(Stage primaryStage) {
+        primaryStage.close(); // Zamknij okno logowania
+        ResourcesManagementApplication mainPanel = new ResourcesManagementApplication();
+        mainPanel.start(new Stage()); // Uruchom główny panel
+    }
+
     private boolean authenticate(String username, String password) {
         // Tutaj możesz umieścić kod do sprawdzenia poprawności logowania,
         // np. porównanie z danymi w bazie danych.
@@ -66,42 +74,3 @@ public class LoginPage extends Application {
         return username.equals("admin") && password.equals("password");
     }
 }
-
-
-
-
-import javax.naming.AuthenticationException;
-        import javax.naming.Context;
-        import javax.naming.NamingException;
-        import javax.naming.directory.DirContext;
-        import javax.naming.directory.InitialDirContext;
-        import java.util.Hashtable;
-
-public class LDAPAuthentication {
-    public static boolean authenticate(String username, String password) {
-        // Tworzenie hashtable dla ustawień połączenia LDAP
-        Hashtable<String, String> env = new Hashtable<>();
-        env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-        env.put(Context.PROVIDER_URL, "ldap://your-ldap-server:389");
-        env.put(Context.SECURITY_AUTHENTICATION, "simple");
-        env.put(Context.SECURITY_PRINCIPAL, "cn=" + username + ",ou=users,dc=example,dc=com");
-        env.put(Context.SECURITY_CREDENTIALS, password);
-
-        try {
-            // Próba nawiązania połączenia z serwerem LDAP
-            DirContext context = new InitialDirContext(env);
-
-            // Jeśli połączenie udane, zamknij context i zwróć true
-            context.close();
-            return true;
-        } catch (AuthenticationException e) {
-            // Błąd uwierzytelniania, użytkownik nieprawidłowy
-            return false;
-        } catch (NamingException e) {
-            // Błąd nawiązywania połączenia lub inne błędy
-            e.printStackTrace();
-            return false;
-        }
-    }
-}
-

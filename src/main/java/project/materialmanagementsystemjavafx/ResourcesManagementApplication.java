@@ -61,7 +61,7 @@ public class ResourcesManagementApplication extends Application {
                 new Button("Show Employees Staging Errors"),
                 new Button("Show Hierarchy"),
                 new Button("Refresh Profiles"),
-                new Button("Show Profiles")
+                new Button("Show Users Profiles")
         );
 
         // Zakładki

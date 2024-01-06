@@ -1,40 +1,30 @@
 package project;
 
+import javax.naming.AuthenticationException;
+import javax.naming.Context;
+import javax.naming.NamingException;
+import javax.naming.directory.DirContext;
+import javax.naming.directory.InitialDirContext;
+import java.util.Hashtable;
+import java.util.Properties;
+
 public class AuthenticationLDAP {
 
-    import javax.naming.AuthenticationException;
-        import javax.naming.Context;
-        import javax.naming.NamingException;
-        import javax.naming.directory.DirContext;
-        import javax.naming.directory.InitialDirContext;
-        import java.util.Hashtable;
+    //    public static boolean authenticate(String username, String password) {
+//        // Tworzenie hashtable dla ustawień połączenia LDAP
+//        Hashtable<String, String> env = new Hashtable<>();
+    public static void main(String[] args) {
 
-    public class LDAPAuthentication {
-        public static boolean authenticate(String username, String password) {
-            // Tworzenie hashtable dla ustawień połączenia LDAP
-            Hashtable<String, String> env = new Hashtable<>();
-            env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-            env.put(Context.PROVIDER_URL, "ldap://your-ldap-server:389");
-            env.put(Context.SECURITY_AUTHENTICATION, "simple");
-            env.put(Context.SECURITY_PRINCIPAL, "cn=" + username + ",ou=users,dc=example,dc=com");
-            env.put(Context.SECURITY_CREDENTIALS, password);
-
-            try {
-                // Próba nawiązania połączenia z serwerem LDAP
-                DirContext context = new InitialDirContext(env);
-
-                // Jeśli połączenie udane, zamknij context i zwróć true
-                context.close();
-                return true;
-            } catch (AuthenticationException e) {
-                // Błąd uwierzytelniania, użytkownik nieprawidłowy
-                return false;
-            } catch (NamingException e) {
-                // Błąd nawiązywania połączenia lub inne błędy
-                e.printStackTrace();
-                return false;
-            }
+        Properties env = new Properties();
+        env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
+        env.put(Context.PROVIDER_URL, "ldap://192.168.1.42:10389");
+        env.put(Context.SECURITY_PRINCIPAL, "uid=admin, ou=system");
+        env.put(Context.SECURITY_CREDENTIALS, "secret");
+        try {
+            DirContext connection = new InitialDirContext(env);
+            System.out.println("Connection: " + connection);
+        } catch (NamingException e) {
+            throw new RuntimeException(e);
         }
     }
-
 }

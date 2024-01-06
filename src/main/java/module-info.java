@@ -7,6 +7,7 @@ module project.materialmanagementsystemjavafx {
     requires com.opencsv;
     requires poi;
     requires poi.ooxml;
+    requires java.naming;
 
     opens project.materialmanagementsystemjavafx to javafx.fxml;
     exports project.materialmanagementsystemjavafx;

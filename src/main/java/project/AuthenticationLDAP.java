@@ -15,6 +15,7 @@ public class AuthenticationLDAP {
 //        Hashtable<String, String> env = new Hashtable<>();
     public static void main(String[] args) {
 
+
         Properties env = new Properties();
         env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
         env.put(Context.PROVIDER_URL, "ldap://192.168.1.42:10389");

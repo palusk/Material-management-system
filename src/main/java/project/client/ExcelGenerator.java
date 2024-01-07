@@ -53,7 +53,7 @@ public class ExcelGenerator {
 
         try {
             FileChooser fileChooser = new FileChooser();
-            fileChooser.setInitialFileName(sheetName.toLowerCase().replace(" ", "_") + ".xlsx");
+            fileChooser.setInitialFileName(sheetName.toLowerCase().replace(" ", "_") + ".csv");
             File file = fileChooser.showSaveDialog(null);
 
             if (file != null) {

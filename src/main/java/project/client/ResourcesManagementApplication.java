@@ -27,9 +27,6 @@ public class ResourcesManagementApplication extends Application {
     private Label resultLabel;
     private ExcelGenerator excelGenerator;
 
-    public static void main(String[] args) {
-        launch(args);
-    }
 
     @Override
     public void start(Stage primaryStage) throws RemoteException, NotBoundException, SQLException {
@@ -73,7 +70,6 @@ public class ResourcesManagementApplication extends Application {
                 new Button("Show Hierarchy"),
                 new Button("Refresh Profiles"),
                 new Button("Show Users Profiles"),
-                new Button("Show Profiles"),
                 new Button("Generate Employee Excel")
 
         );

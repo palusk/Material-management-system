@@ -1,4 +1,4 @@
-package project;
+package project.server.rmi.DataManagement;
 
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;

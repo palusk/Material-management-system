@@ -1,4 +1,4 @@
-package project.materialmanagementsystemjavafx;
+package project.client;
 
 import javafx.application.Application;
 import javafx.beans.property.SimpleStringProperty;
@@ -9,11 +9,15 @@ import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import project.ExcelGenerator;
-import project.HierarchyManager;
-import project.ProductsLoader;
-import project.ProfilesManager;
+import project.client.interfaces.HierarchyManagerRemote;
+import project.client.interfaces.ProductsLoaderRemote;
+import project.client.interfaces.ProfilesManagerRemote;
+import project.client.interfaces.RemoteManager;
+
+
 import java.io.File;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 import java.sql.SQLException;
 
 public class ResourcesManagementApplication extends Application {
@@ -28,11 +32,14 @@ public class ResourcesManagementApplication extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) {
+    public void start(Stage primaryStage) throws RemoteException, NotBoundException, SQLException {
         primaryStage.setTitle("JavaFX App");
-        ProductsLoader productsLoader = new ProductsLoader();
-        HierarchyManager hierarchyManager = new HierarchyManager();
-        ProfilesManager profilesManager = new ProfilesManager();
+
+        RemoteManager remoteManager = new RemoteManagerImpl();
+        ProductsLoaderRemote productsLoader = remoteManager.getProductsLoader();
+        HierarchyManagerRemote hierarchyManager = remoteManager.getHierarchyManager();
+        ProfilesManagerRemote profilesManager = remoteManager.getProfilesManager();
+
         FileChooser fileChooser = new FileChooser();
 
         excelGenerator = new ExcelGenerator();
@@ -90,6 +97,8 @@ public class ResourcesManagementApplication extends Application {
                     resultLabel.setText("Load Data Result: " + result);
                 } catch (SQLException ex) {
                     throw new RuntimeException(ex);
+                } catch (RemoteException ex) {
+                    throw new RuntimeException(ex);
                 }
             } else {
                 resultLabel.setText("Please select a CSV file first.");
@@ -97,17 +106,31 @@ public class ResourcesManagementApplication extends Application {
         });
 
         ((Button) productButtonsVBox.getChildren().get(2)).setOnAction(e -> {
-            String stagingErrors = productsLoader.getStagingErrors();
+            String stagingErrors = null;
+            try {
+                stagingErrors = productsLoader.getStagingErrors();
+            } catch (RemoteException ex) {
+                throw new RuntimeException(ex);
+            }
             printTable(stagingErrors, tableView);
         });
 
         ((Button) productButtonsVBox.getChildren().get(3)).setOnAction(e -> {
-            productsLoader.clearStaging();
+            try {
+                productsLoader.clearStaging();
+            } catch (RemoteException ex) {
+                throw new RuntimeException(ex);
+            }
             resultLabel.setText("Staging cleared");
         });
 
         ((Button) productButtonsVBox.getChildren().get(4)).setOnAction(e -> {
-            String stagingTable = productsLoader.getStagingTable();
+            String stagingTable = null;
+            try {
+                stagingTable = productsLoader.getStagingTable();
+            } catch (RemoteException ex) {
+                throw new RuntimeException(ex);
+            }
             printTable(stagingTable, tableView);
         });
 
@@ -125,7 +148,7 @@ public class ResourcesManagementApplication extends Application {
                 try {
                     String result = hierarchyManager.loadEmployeesFromCSV(selectedEmployeesFile.getAbsolutePath());
                     resultLabel.setText("Load Data Result: " + result);
-                } catch (SQLException ex) {
+                } catch (SQLException | RemoteException ex) {
                     throw new RuntimeException(ex);
                 }
             } else {
@@ -134,37 +157,72 @@ public class ResourcesManagementApplication extends Application {
         });
 
         ((Button) employeeButtonsVBox.getChildren().get(2)).setOnAction(e -> {
-            String stagingTable = hierarchyManager.refreshHierarchy();
+            String stagingTable = null;
+            try {
+                stagingTable = hierarchyManager.refreshHierarchy();
+            } catch (RemoteException ex) {
+                throw new RuntimeException(ex);
+            }
             resultLabel.setText(stagingTable);
         });
 
         ((Button) employeeButtonsVBox.getChildren().get(3)).setOnAction(e -> {
-            String stagingTable = hierarchyManager.getStagingTable();
+            String stagingTable = null;
+            try {
+                stagingTable = hierarchyManager.getStagingTable();
+            } catch (RemoteException ex) {
+                throw new RuntimeException(ex);
+            }
             printTable(stagingTable, tableView);
         });
 
         ((Button) employeeButtonsVBox.getChildren().get(4)).setOnAction(e -> {
-            String stagingTable = hierarchyManager.clearStaging();
+            String stagingTable = null;
+            try {
+                stagingTable = hierarchyManager.clearStaging();
+            } catch (RemoteException ex) {
+                throw new RuntimeException(ex);
+            }
             resultLabel.setText(stagingTable);
         });
 
         ((Button) employeeButtonsVBox.getChildren().get(5)).setOnAction(e -> {
-            String stagingErrorsTable = hierarchyManager.getStagingErrors();
+            String stagingErrorsTable = null;
+            try {
+                stagingErrorsTable = hierarchyManager.getStagingErrors();
+            } catch (RemoteException ex) {
+                throw new RuntimeException(ex);
+            }
             printTable(stagingErrorsTable, tableView);
         });
 
         ((Button) employeeButtonsVBox.getChildren().get(6)).setOnAction(e -> {
-            String hierarchyTable = hierarchyManager.getHierarchy();
+            String hierarchyTable = null;
+            try {
+                hierarchyTable = hierarchyManager.getHierarchy();
+            } catch (RemoteException ex) {
+                throw new RuntimeException(ex);
+            }
             printTable(hierarchyTable, tableView);
         });
 
         ((Button) employeeButtonsVBox.getChildren().get(7)).setOnAction(e -> {
-            String stagingTable = profilesManager.updateProfiles();
+            String stagingTable = null;
+            try {
+                stagingTable = profilesManager.updateProfiles();
+            } catch (RemoteException ex) {
+                throw new RuntimeException(ex);
+            }
             resultLabel.setText(stagingTable);
         });
 
         ((Button) employeeButtonsVBox.getChildren().get(8)).setOnAction(e -> {
-            String profilesTable = profilesManager.getProfiles();
+            String profilesTable = null;
+            try {
+                profilesTable = profilesManager.getProfiles();
+            } catch (RemoteException ex) {
+                throw new RuntimeException(ex);
+            }
             printTable(profilesTable, tableView);
         });
 

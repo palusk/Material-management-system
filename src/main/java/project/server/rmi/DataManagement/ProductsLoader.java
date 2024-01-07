@@ -1,6 +1,6 @@
-package project;
+package project.server.rmi.DataManagement;
 
-import project.database.Connector;
+import project.server.rmi.database.Connector;
 import java.sql.SQLException;
 import java.util.List;
 

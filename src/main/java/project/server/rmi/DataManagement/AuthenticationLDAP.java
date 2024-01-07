@@ -1,4 +1,4 @@
-package project;
+package project.server.rmi.DataManagement;
 
 import javax.naming.AuthenticationException;
 import javax.naming.Context;

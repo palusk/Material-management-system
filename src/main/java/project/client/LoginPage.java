@@ -1,4 +1,4 @@
-package project.materialmanagementsystemjavafx;
+package project.client;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -6,6 +6,10 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.sql.SQLException;
 
 public class LoginPage extends Application {
 
@@ -46,7 +50,15 @@ public class LoginPage extends Application {
             boolean isValid = authenticate(usernameInput.getText(), passwordInput.getText());
             if (isValid) {
                 System.out.println("Login successful!");
-                openMainPanel(primaryStage); // Przełącz do głównego panelu po zalogowaniu
+                try {
+                    openMainPanel(primaryStage); // Przełącz do głównego panelu po zalogowaniu
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                } catch (NotBoundException ex) {
+                    throw new RuntimeException(ex);
+                } catch (RemoteException ex) {
+                    throw new RuntimeException(ex);
+                }
             } else {
                 System.out.println("Login failed. Please check your credentials.");
             }
@@ -61,7 +73,7 @@ public class LoginPage extends Application {
     }
 
     // Dodane: Metoda otwierająca główny panel
-    private void openMainPanel(Stage primaryStage) {
+    private void openMainPanel(Stage primaryStage) throws SQLException, NotBoundException, RemoteException {
         primaryStage.close(); // Zamknij okno logowania
         ResourcesManagementApplication mainPanel = new ResourcesManagementApplication();
         mainPanel.start(new Stage()); // Uruchom główny panel

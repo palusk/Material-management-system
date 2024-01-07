@@ -1,4 +1,4 @@
-package project.database;
+package project.server.rmi.database;
 
 import java.sql.*;
 import java.util.List;

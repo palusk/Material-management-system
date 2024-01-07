@@ -1,4 +1,4 @@
-package project;
+package project.client;
 
 import javafx.stage.FileChooser;
 import org.apache.poi.ss.usermodel.Cell;

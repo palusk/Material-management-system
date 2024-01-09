@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import project.server.rmi.DataManagement.AuthenticationLDAP;
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -80,9 +81,9 @@ public class LoginPage extends Application {
     }
 
     private boolean authenticate(String username, String password) {
-        // Tutaj możesz umieścić kod do sprawdzenia poprawności logowania,
-        // np. porównanie z danymi w bazie danych.
-        // W tym przykładzie logujemy się, jeśli username to "admin" a hasło to "password".
-        return username.equals("admin") && password.equals("password");
+
+        AuthenticationLDAP ldapConnect = new AuthenticationLDAP();
+        return ldapConnect.authUser(username, password);
+
     }
 }

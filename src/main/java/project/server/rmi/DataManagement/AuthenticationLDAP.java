@@ -178,15 +178,15 @@ public class AuthenticationLDAP {
         try {
             Properties env = new Properties();
             env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-            env.put(Context.PROVIDER_URL, "ldap://localhost:10389");
-            env.put(Context.SECURITY_PRINCIPAL, "cn="+username+",ou=users,ou=system");  //check the DN correctly
+            env.put(Context.PROVIDER_URL, "ldap://192.168.1.42:10389");
+            env.put(Context.SECURITY_PRINCIPAL, "uid="+username+",ou=users,ou=system");
             env.put(Context.SECURITY_CREDENTIALS, password);
             DirContext con = new InitialDirContext(env);
-            System.out.println("success");
+            System.out.println("LDAP authentication succeeded");
             con.close();
             return true;
         }catch (Exception e) {
-            System.out.println("failed: "+e.getMessage());
+            System.out.println("LDAP authentication failed: "+e.getMessage());
             return false;
         }
     }
@@ -196,8 +196,8 @@ public class AuthenticationLDAP {
         try {
             String dnBase=",ou=users,ou=system";
             ModificationItem[] mods= new ModificationItem[1];
-            mods[0] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, new BasicAttribute("userPassword", password));// if you want, then you can delete the old password and after that you can replace with new password
-            connection.modifyAttributes("cn="+username +dnBase, mods);//try to form DN dynamically
+            mods[0] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, new BasicAttribute("userPassword", password));
+            connection.modifyAttributes("uid="+username +dnBase, mods); //dynamiczne tworzenie DN (nazwy wyróżniającej)
             System.out.println("success");
         }catch (Exception e) {
             System.out.println("failed: "+e.getMessage());
@@ -220,6 +220,7 @@ public class AuthenticationLDAP {
     public static void main(String[] args) {
 
         AuthenticationLDAP testObject = new AuthenticationLDAP();
+        testObject.updateUserPassword("mziecina", "123");
 //        testObject.addUser();
 //        testObject.getAllUsers();
 //        testObject.deleteUser("kpalus");

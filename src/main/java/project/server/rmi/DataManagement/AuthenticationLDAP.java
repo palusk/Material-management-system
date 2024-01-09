@@ -110,7 +110,6 @@ public class AuthenticationLDAP {
         return nameSurname;
     }
 
-
     public void addUser() {
         Attributes attributes = new BasicAttributes();
         Attribute attribute = new BasicAttribute("objectClass");
@@ -139,7 +138,6 @@ public class AuthenticationLDAP {
         } catch (NamingException e) {
             e.printStackTrace();
         }
-
     }
 
     public void deleteUser(String uid){
@@ -210,7 +208,7 @@ public class AuthenticationLDAP {
             Attribute attribute = new BasicAttribute("employeeNumber", employeeNumber);
             ModificationItem[] mods= new ModificationItem[1];
             mods[0] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, attribute);
-            connection.modifyAttributes("cn="+username +dnBase, mods);//try to form DN dynamically
+            connection.modifyAttributes("cn="+username +dnBase, mods);
             System.out.println("success");
         }catch (Exception e) {
             System.out.println("failed: "+e.getMessage());
@@ -220,11 +218,12 @@ public class AuthenticationLDAP {
     public static void main(String[] args) {
 
         AuthenticationLDAP testObject = new AuthenticationLDAP();
-        testObject.updateUserPassword("mziecina", "123");
+ //       testObject.updateUserPassword("mziecina", "123");
 //        testObject.addUser();
-//        testObject.getAllUsers();
+        testObject.getAllUsers();
 //        testObject.deleteUser("kpalus");
 
-    }
 
+
+    }
 }

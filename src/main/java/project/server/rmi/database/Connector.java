@@ -1,6 +1,7 @@
 package project.server.rmi.database;
 
 import java.sql.*;
+import java.util.Arrays;
 import java.util.List;
 
 public class Connector {
@@ -32,6 +33,22 @@ public class Connector {
                 return "An error has occurred please contact your administrator";
             }
         }
+
+    public String callStoredProcedure(String procedureName, Object[] input, boolean outputFlag, boolean withNames) {
+        try {
+            String result = executeCall(getCon(), procedureName, input, outputFlag);
+            if(outputFlag == true) {
+                if (!withNames){
+                    String[] lines = result.split("\n");
+                    result = String.join("\n", Arrays.copyOfRange(lines, 1, lines.length));
+                }
+                return result;
+            }
+            else return "No output";
+        } catch (SQLException e) {
+            return "An error has occurred please contact your administrator";
+        }
+    }
 
     public static String executeCall(Connection connection, String procedureName, Object[] input, boolean outputFlag) throws SQLException {
         String result = "No output";

@@ -10,6 +10,5 @@ public interface RemoteManager extends Remote {
     ProductsLoaderRemote getProductsLoader() throws RemoteException, NotBoundException;
     HierarchyManagerRemote getHierarchyManager() throws RemoteException, NotBoundException;
     ProfilesManagerRemote getProfilesManager() throws RemoteException, NotBoundException;
-
     AuthenticationLDAPRemote getAuthenticationLDAP() throws RemoteException, NotBoundException;
 }

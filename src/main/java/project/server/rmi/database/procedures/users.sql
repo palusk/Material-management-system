@@ -75,4 +75,25 @@ BEGIN
     FROM users_profiles;
 END //
 
+CREATE OR REPLACE PROCEDURE getUserWarehouse(
+    IN p_user_id INT
+)
+BEGIN
+    SELECT w.warehouse_name
+    FROM users u
+             JOIN employees e ON u.employee_id = e.employee_id
+             JOIN warehouses w ON w.warehouse_id = e.warehouse_id
+    WHERE u.user_id = p_user_id;
+END //
+
+CREATE OR REPLACE PROCEDURE getUserProfile(
+    IN p_user_id INT
+)
+BEGIN
+    SELECT profile_id
+    FROM users_profiles
+        JOIN users u on users_profiles.employee_id = u.employee_id
+    WHERE u.user_id = p_user_id;
+END //
+
 DELIMITER ;

@@ -2,7 +2,7 @@ DELIMITER //
 
 CREATE OR REPLACE PROCEDURE GetAllWarehouses()
 BEGIN
-    SELECT *
+    SELECT warehouse_name
     FROM warehouses;
 END //
 

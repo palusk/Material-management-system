@@ -6,6 +6,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import project.client.interfaces.AuthenticationLDAPRemote;
+import project.client.interfaces.ProductsLoaderRemote;
+import project.client.interfaces.RemoteManager;
 import project.server.rmi.DataManagement.AuthenticationLDAP;
 
 import java.rmi.NotBoundException;
@@ -48,7 +51,14 @@ public class LoginPage extends Application {
         GridPane.setConstraints(loginButton, 1, 2);
         loginButton.setOnAction(e -> {
             // Tutaj umieść kod do sprawdzenia poprawności logowania
-            boolean isValid = authenticate(usernameInput.getText(), passwordInput.getText());
+            boolean isValid = false;
+            try {
+                isValid = authenticate(usernameInput.getText(), passwordInput.getText());
+            } catch (RemoteException ex) {
+                throw new RuntimeException(ex);
+            } catch (NotBoundException ex) {
+                throw new RuntimeException(ex);
+            }
             if (isValid) {
                 System.out.println("Login successful!");
                 try {
@@ -80,9 +90,12 @@ public class LoginPage extends Application {
         mainPanel.start(new Stage()); // Uruchom główny panel
     }
 
-    private boolean authenticate(String username, String password) {
+    private boolean authenticate(String username, String password) throws RemoteException, NotBoundException {
 
-        AuthenticationLDAP ldapConnect = new AuthenticationLDAP();
+        RemoteManager remoteManager = new RemoteManagerImpl();
+
+        AuthenticationLDAPRemote ldapConnect = remoteManager.getAuthenticationLDAP();
+
         return ldapConnect.authUser(username, password);
 
     }

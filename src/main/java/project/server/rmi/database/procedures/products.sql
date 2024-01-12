@@ -54,6 +54,12 @@ BEGIN
     WHERE product_id = p_product_id;
 END //
 
+CREATE OR REPLACE PROCEDURE GetAllProducts()
+BEGIN
+    SELECT CONCAT(product_id,' ',product_name)
+    FROM products;
+END //
+
 CREATE OR REPLACE PROCEDURE GetProductsStockInAllWarehouses()
 BEGIN
     SELECT ps.product_id, p.product_name, ps.quantity, ps.warehouse_id, ps.expiration_date

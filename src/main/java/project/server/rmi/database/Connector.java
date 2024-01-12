@@ -70,6 +70,7 @@ public class Connector {
                 }
             }
         } catch (SQLException e) {
+            System.out.println(e);
             return "An error has occurred. Please contact your administrator";
         }
 

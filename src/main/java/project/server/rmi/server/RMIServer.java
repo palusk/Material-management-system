@@ -19,11 +19,14 @@ public class RMIServer {
             ProfilesManagerRemote profilesManagerRemote = new ProfilesManagerImpl();
             registry.rebind("ProfilesManager", profilesManagerRemote);
 
-            AuthenticationLDAPRemote authenticationLDAPRemote = new AuthenticationLDAPImpl();
-            registry.rebind("AuthenticationLDAP", authenticationLDAPRemote);
-
             DataProviderRemote dataProviderRemote = new DataProviderImpl();
             registry.rebind("DataProvider", dataProviderRemote);
+
+            ProductsManagerRemote productsManagerRemote = new ProductsManagerImpl();
+            registry.rebind("ProductsManager", productsManagerRemote);
+
+            AuthenticationLDAPRemote authenticationLDAPRemote = new AuthenticationLDAPImpl();
+            registry.rebind("AuthenticationLDAP", authenticationLDAPRemote);
 
             System.out.println("RMI Server is running.");
         } catch (Exception e) {

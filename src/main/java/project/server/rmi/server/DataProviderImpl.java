@@ -17,4 +17,10 @@ public class DataProviderImpl extends UnicastRemoteObject implements project.cli
     public String getWarehouseProducts(int warehouseID) throws RemoteException {
         return dataProvider.getWarehouseProducts(warehouseID);
     }
+
+    @Override
+    public String getAllProducts() throws RemoteException {
+        return dataProvider.getAllProducts();
+    }
+
 }

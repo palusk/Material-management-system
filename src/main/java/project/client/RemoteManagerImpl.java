@@ -42,4 +42,10 @@ public class RemoteManagerImpl extends UnicastRemoteObject implements RemoteMana
         return (DataProviderRemote) registry.lookup("DataProvider");
     }
 
+    @Override
+    public ProductsManagerRemote getProductsManager() throws RemoteException, NotBoundException {
+        Registry registry = LocateRegistry.getRegistry("localhost", 1099);
+        return (ProductsManagerRemote) registry.lookup("ProductsManager");
+    }
+
 }

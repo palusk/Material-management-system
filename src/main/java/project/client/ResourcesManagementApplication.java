@@ -1,8 +1,6 @@
 package project.client;
 
 import javafx.application.Application;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -36,6 +34,7 @@ public class ResourcesManagementApplication extends Application {
         ProductsLoaderRemote productsLoader = remoteManager.getProductsLoader();
         HierarchyManagerRemote hierarchyManager = remoteManager.getHierarchyManager();
         ProfilesManagerRemote profilesManager = remoteManager.getProfilesManager();
+        TableManager tableManager = new TableManager();
 
         FileChooser fileChooser = new FileChooser();
 
@@ -108,7 +107,7 @@ public class ResourcesManagementApplication extends Application {
             } catch (RemoteException ex) {
                 throw new RuntimeException(ex);
             }
-            printTable(stagingErrors, tableView);
+            tableManager.printTable(stagingErrors, tableView);
         });
 
         ((Button) productButtonsVBox.getChildren().get(3)).setOnAction(e -> {
@@ -127,7 +126,7 @@ public class ResourcesManagementApplication extends Application {
             } catch (RemoteException ex) {
                 throw new RuntimeException(ex);
             }
-            printTable(stagingTable, tableView);
+            tableManager.printTable(stagingTable, tableView);
         });
 
         ((Button) productButtonsVBox.getChildren().get(5)).setOnAction(e -> {
@@ -169,7 +168,7 @@ public class ResourcesManagementApplication extends Application {
             } catch (RemoteException ex) {
                 throw new RuntimeException(ex);
             }
-            printTable(stagingTable, tableView);
+            tableManager.printTable(stagingTable, tableView);
         });
 
         ((Button) employeeButtonsVBox.getChildren().get(4)).setOnAction(e -> {
@@ -189,7 +188,7 @@ public class ResourcesManagementApplication extends Application {
             } catch (RemoteException ex) {
                 throw new RuntimeException(ex);
             }
-            printTable(stagingErrorsTable, tableView);
+            tableManager.printTable(stagingErrorsTable, tableView);
         });
 
         ((Button) employeeButtonsVBox.getChildren().get(6)).setOnAction(e -> {
@@ -199,7 +198,7 @@ public class ResourcesManagementApplication extends Application {
             } catch (RemoteException ex) {
                 throw new RuntimeException(ex);
             }
-            printTable(hierarchyTable, tableView);
+            tableManager.printTable(hierarchyTable, tableView);
         });
 
         ((Button) employeeButtonsVBox.getChildren().get(7)).setOnAction(e -> {
@@ -219,7 +218,7 @@ public class ResourcesManagementApplication extends Application {
             } catch (RemoteException ex) {
                 throw new RuntimeException(ex);
             }
-            printTable(profilesTable, tableView);
+            tableManager.printTable(profilesTable, tableView);
         });
 
         ((Button) employeeButtonsVBox.getChildren().get(9)).setOnAction(e -> {
@@ -232,52 +231,5 @@ public class ResourcesManagementApplication extends Application {
 
         primaryStage.setScene(scene);
         primaryStage.show();
-    }
-
-    private ObservableList<ObservableList<String>> parseData(String dataString) {
-        ObservableList<ObservableList<String>> data = FXCollections.observableArrayList();
-        String[] rows = dataString.split("\n");
-
-        for (String row : rows) {
-            String[] columns = row.split(";");
-            ObservableList<String> rowData = FXCollections.observableArrayList(columns);
-            data.add(rowData);
-        }
-        return data;
-    }
-
-    private void printTable(String tableData, TableView<ObservableList<String>> tableView) {
-        tableView.getItems().clear();
-        tableView.getColumns().clear();
-        ObservableList<ObservableList<String>> data = parseData(tableData);
-
-        if (data.isEmpty() || data.get(0).isEmpty()) {
-            addNoDataColumn(tableView);
-        } else {
-            for (int i = 0; i < data.get(0).size(); i++) {
-                final int index = i;
-                TableColumn<ObservableList<String>, String> column = new TableColumn<>(data.get(0).get(i));
-
-                column.setCellValueFactory(cellDataFeatures -> {
-                    ObservableList<String> rowValues = cellDataFeatures.getValue();
-                    return new SimpleStringProperty(rowValues.get(index));
-                });
-
-                tableView.getColumns().add(column);
-            }
-
-            data.remove(0);
-
-            tableView.setItems(data);
-        }
-    }
-
-    private void addNoDataColumn(TableView<ObservableList<String>> tableView) {
-        TableColumn<ObservableList<String>, String> column = new TableColumn<>("No Data");
-        column.setCellValueFactory(cellDataFeatures -> new SimpleStringProperty("NO DATA"));
-        tableView.getColumns().add(column);
-
-        // Ustawienie pustego wiersza, aby tekst "NO DATA" został wyświetlony
-        tableView.setItems(FXCollections.emptyObservableList());
     }
 }

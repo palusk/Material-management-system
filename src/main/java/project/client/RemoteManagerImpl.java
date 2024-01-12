@@ -37,4 +37,10 @@ public class RemoteManagerImpl extends UnicastRemoteObject implements RemoteMana
         return (AuthenticationLDAPRemote) registry.lookup("AuthenticationLDAP");
     }
 
+    @Override
+    public DataProviderRemote getDataProvider() throws RemoteException, NotBoundException {
+        Registry registry = LocateRegistry.getRegistry("localhost", 1099);
+        return (DataProviderRemote) registry.lookup("DataProvider");
+    }
+
 }

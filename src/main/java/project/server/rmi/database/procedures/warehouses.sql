@@ -2,7 +2,7 @@ DELIMITER //
 
 CREATE OR REPLACE PROCEDURE GetAllWarehouses()
 BEGIN
-    SELECT warehouse_name
+    SELECT CONCAT(warehouse_id,' ',warehouse_name)
     FROM warehouses;
 END //
 

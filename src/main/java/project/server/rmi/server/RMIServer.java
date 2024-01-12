@@ -1,9 +1,6 @@
 package project.server.rmi.server;
 
-import project.client.interfaces.AuthenticationLDAPRemote;
-import project.client.interfaces.HierarchyManagerRemote;
-import project.client.interfaces.ProductsLoaderRemote;
-import project.client.interfaces.ProfilesManagerRemote;
+import project.client.interfaces.*;
 
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -25,6 +22,11 @@ public class RMIServer {
 
             AuthenticationLDAPRemote authenticationLDAPRemote = new AuthenticationLDAPImpl();
             registry.rebind("AuthenticationLDAP", authenticationLDAPRemote);
+
+            DataProviderRemote dataProviderRemote = new DataProviderImpl();
+            registry.rebind("DataProvider", dataProviderRemote);
+
+
 
             System.out.println("RMI Server is running.");
         } catch (Exception e) {

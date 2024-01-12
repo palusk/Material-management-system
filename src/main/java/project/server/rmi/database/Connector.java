@@ -125,12 +125,16 @@ public class Connector {
     }
 
     public String insertDataIntoStaging(List<String> inputString, String procedureName, int columnsNumber) {
+        System.out.println(inputString);
+
         StringBuilder failedRows = new StringBuilder();
         Integer rowNumber = 0;
 
         for (String line : inputString) {
             if (!line.trim().isEmpty()) {
                 String[] columns = line.split(";");
+                System.out.println(columnsNumber);
+                System.out.println(columns.length);
                 if (columns.length == columnsNumber) {
                     try {
                         callStoredProcedure(procedureName, columns, false);

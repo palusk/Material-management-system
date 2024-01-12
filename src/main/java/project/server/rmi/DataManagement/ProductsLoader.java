@@ -19,7 +19,7 @@ public class ProductsLoader {
             } else {
                 error = "Load for following rows failed: " + error;
             }
-
+            System.out.println(error);
             return "CSV succesfull";
         } catch (Exception e) {
             // Log the exception using a logging framework

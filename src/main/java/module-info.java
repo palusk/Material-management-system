@@ -17,4 +17,6 @@ module project.materialmanagementsystemjavafx {
     opens project.client.interfaces to javafx.fxml;
     exports project.server.rmi.DataManagement;
     opens project.server.rmi.DataManagement to javafx.fxml;
+    exports project.client.user_interface;
+    opens project.client.user_interface to javafx.fxml;
 }

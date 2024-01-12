@@ -25,7 +25,7 @@ public class TableManager {
         return data;
     }
 
-    void printTable(String tableData, TableView<ObservableList<String>> tableView) {
+    public void printTable(String tableData, TableView<ObservableList<String>> tableView) {
         tableView.getItems().clear();
         tableView.getColumns().clear();
         ObservableList<ObservableList<String>> data = parseData(tableData);

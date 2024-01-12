@@ -11,7 +11,6 @@ import project.client.TableManager;
 import project.client.interfaces.DataProviderRemote;
 import project.client.interfaces.ProfilesManagerRemote;
 import project.client.interfaces.RemoteManager;
-
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.List;
@@ -29,7 +28,6 @@ public class ProductsTabCreator {
         VBox vbox = new VBox(dropdown, tableView);
         vbox.setPadding(new Insets(10));
 
-        // Ustawiamy zawartość zakładki
         tab.setContent(vbox);
 
         return tab;

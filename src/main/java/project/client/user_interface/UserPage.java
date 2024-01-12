@@ -9,7 +9,6 @@ import project.client.interfaces.RemoteManager;
 import project.client.user_interface.tabs.OrderTabCreator;
 import project.client.user_interface.tabs.ProductsTabCreator;
 import project.client.user_interface.tabs.ProfileTabCreator;
-
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
@@ -40,7 +39,7 @@ public class UserPage {
             return new Scene(pane, 400, 300);
         } catch (RemoteException | NotBoundException e) {
             e.printStackTrace();
-            return null; // Handle the exception appropriately in your application
+            return null;
         }
     }
 }

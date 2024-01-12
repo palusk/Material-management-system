@@ -4,10 +4,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableView;
-import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.util.converter.DefaultStringConverter;
 
 public class TableManager {
 
@@ -57,9 +54,7 @@ public class TableManager {
         column.setCellValueFactory(cellDataFeatures -> new SimpleStringProperty("NO DATA"));
         tableView.getColumns().add(column);
 
-        // Ustawienie pustego wiersza, aby tekst "NO DATA" został wyświetlony
         tableView.setItems(FXCollections.emptyObservableList());
     }
-
 
 }

@@ -2,7 +2,6 @@ package project.server.rmi.server;
 
 import project.server.rmi.DataManagement.ProductsLoader;
 import project.client.interfaces.ProductsLoaderRemote;
-
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.sql.SQLException;

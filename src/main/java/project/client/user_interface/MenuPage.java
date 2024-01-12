@@ -3,7 +3,6 @@ package project.client.user_interface;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
-
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 

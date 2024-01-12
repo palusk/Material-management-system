@@ -1,7 +1,5 @@
 package project.client.interfaces;
 
-import project.server.rmi.DataManagement.AuthenticationLDAP;
-
 import java.rmi.NotBoundException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;

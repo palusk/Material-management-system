@@ -101,7 +101,6 @@ public class Connector {
 
         StringBuilder result = new StringBuilder();
 
-        // Nagłówki kolumn
         for (int i = 1; i <= columnCount; i++) {
             result.append(metaData.getColumnName(i));
             if (i < columnCount) {
@@ -110,7 +109,6 @@ public class Connector {
         }
         result.append("\n");
 
-        // Dane
         while (resultSet.next()) {
             for (int i = 1; i <= columnCount; i++) {
                 result.append(resultSet.getString(i));

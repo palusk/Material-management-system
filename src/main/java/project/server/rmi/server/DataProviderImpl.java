@@ -1,14 +1,9 @@
 package project.server.rmi.server;
 
-import project.client.interfaces.ProfilesManagerRemote;
-import project.server.rmi.DataManagement.DataProvider;
-import project.server.rmi.DataManagement.HierarchyManager;
-import project.server.rmi.DataManagement.ProfilesManager;
-import project.server.rmi.interfaces.DataProviderRemote;
 
+import project.server.rmi.DataManagement.DataProvider;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.List;
 
 public class DataProviderImpl extends UnicastRemoteObject implements project.client.interfaces.DataProviderRemote {
     private DataProvider dataProvider;

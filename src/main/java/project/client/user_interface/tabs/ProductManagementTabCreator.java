@@ -8,14 +8,11 @@ import javafx.scene.control.TableView;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import project.client.ExcelGenerator;
-import project.client.RemoteManagerImpl;
 import project.client.TableManager;
 import project.client.interfaces.ProductsLoaderRemote;
 import project.client.interfaces.RemoteManager;
 import project.client.user_interface.WindowManager;
-
 import java.io.File;
-import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
 
@@ -45,10 +42,8 @@ public class ProductManagementTabCreator {
     public Tab create() {
         Tab productTab = new Tab("Product Management");
 
-        // VBox zawierający TableView i resultLabel
         VBox vbox = new VBox(tableView, resultLabel);
 
-        // Dodanie przycisków do VBox
         vbox.getChildren().addAll(
                 createButton("Select Product CSV File", this::handleSelectProductFile),
                 createButton("Load Product Data", this::handleLoadProductData),
@@ -80,13 +75,13 @@ public class ProductManagementTabCreator {
                 resultLabel.setText("Load Data Result: " + result);
             } catch (RemoteException e) {
                 resultLabel.setText("Error loading data: Remote error - " + e.getMessage());
-                e.printStackTrace(); // Tutaj możesz również obsłużyć błąd bardziej szczegółowo
+                e.printStackTrace();
             } catch (SQLException e) {
                 resultLabel.setText("Error loading data: SQL error - " + e.getMessage());
-                e.printStackTrace(); // Tutaj możesz również obsłużyć błąd bardziej szczegółowo
+                e.printStackTrace();
             } catch (Exception e) {
                 resultLabel.setText("Error loading data: " + e.getMessage());
-                e.printStackTrace(); // Tutaj możesz również obsłużyć błąd bardziej szczegółowo
+                e.printStackTrace();
             }
         } else {
             resultLabel.setText("Please select a CSV file first.");

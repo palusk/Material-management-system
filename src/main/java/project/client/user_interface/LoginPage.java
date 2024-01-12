@@ -11,7 +11,6 @@ import javafx.scene.layout.GridPane;
 import project.client.RemoteManagerImpl;
 import project.client.interfaces.AuthenticationLDAPRemote;
 import project.client.interfaces.RemoteManager;
-
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
@@ -34,7 +33,6 @@ class LoginPage {
         grid.setPadding(new Insets(10, 10, 10, 10));
         grid.setVgap(8);
         grid.setHgap(10);
-
 
         Label usernameLabel = new Label("Username:");
         GridPane.setConstraints(usernameLabel, 0, 0);

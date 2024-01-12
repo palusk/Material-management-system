@@ -7,11 +7,9 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.sql.SQLException;
 
-
 public class HierarchyManagerImpl extends UnicastRemoteObject implements HierarchyManagerRemote {
 
     private HierarchyManager hierarchyManager;
-    static ExcelImporter importer = new ExcelImporter();
 
     public HierarchyManagerImpl() throws RemoteException {
         super();

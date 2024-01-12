@@ -20,7 +20,6 @@ public class ProfileTabCreator {
         VBox vbox = new VBox(logoutButton);
         vbox.setPadding(new Insets(10));
 
-        // Create a new BorderPane instance for each scene
         tab.setContent(new VBox(new BorderPane(), vbox));
 
         return tab;

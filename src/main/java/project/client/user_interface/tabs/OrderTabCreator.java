@@ -18,7 +18,6 @@ public class OrderTabCreator {
 
     public static Tab create(RemoteManager remoteManager, DataProviderRemote dataProvider) throws NotBoundException, RemoteException {
         Tab tab = new Tab("Orders creator");
-        TableManager tableManager = new TableManager();
         ProfilesManagerRemote profilesManager = remoteManager.getProfilesManager();
         TableView<ObservableList<String>> tableView = new TableView<>();
 

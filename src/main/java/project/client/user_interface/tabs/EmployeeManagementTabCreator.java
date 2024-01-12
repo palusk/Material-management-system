@@ -7,15 +7,12 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 import project.client.ExcelGenerator;
 import project.client.TableManager;
 import project.client.interfaces.HierarchyManagerRemote;
-import project.client.interfaces.ProductsLoaderRemote;
 import project.client.interfaces.ProfilesManagerRemote;
 import project.client.interfaces.RemoteManager;
 import project.client.user_interface.WindowManager;
-import project.server.rmi.DataManagement.HierarchyManager;
 
 import java.io.File;
 import java.rmi.RemoteException;

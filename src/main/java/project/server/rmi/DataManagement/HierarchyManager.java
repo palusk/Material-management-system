@@ -1,4 +1,5 @@
 package project.server.rmi.DataManagement;
+
 import project.server.rmi.database.Connector;
 import java.sql.SQLException;
 import java.util.List;
@@ -20,7 +21,6 @@ public class HierarchyManager {
 
             return error;
         } catch (Exception e) {
-            // Log the exception using a logging framework
             return "CSV read failed";
         }
     }

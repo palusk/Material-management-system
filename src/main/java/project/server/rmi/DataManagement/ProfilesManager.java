@@ -1,12 +1,6 @@
 package project.server.rmi.DataManagement;
 
-import project.client.RemoteManagerImpl;
-import project.client.interfaces.ProfilesManagerRemote;
-import project.client.interfaces.RemoteManager;
 import project.server.rmi.database.Connector;
-
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.List;
 

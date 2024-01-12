@@ -20,4 +20,9 @@ public class ProductsManagerImpl extends UnicastRemoteObject implements Products
     public void insertStagingOrder(String orderDetails) throws RemoteException {
         productsManager.insertStagingOrder(orderDetails);
     }
+
+    @Override
+    public String getOrdersInWarehouse(String warehouseID) throws RemoteException {
+        return productsManager.getOrdersInWarehouse(warehouseID);
+    }
 }

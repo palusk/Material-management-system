@@ -23,10 +23,9 @@ CREATE OR REPLACE PROCEDURE GetOrdersInWarehouse(
     IN p_warehouse_id INT
 )
 BEGIN
-    SELECT po.order_id, po.order_date, os.status_name, e.first_name, e.last_name
+    SELECT CONCAT(po.order_id,' - ', po.order_date,' - ', os.status_name,';')
     FROM pending_orders po
              JOIN order_status os ON po.status_id = os.status_id
-             JOIN employees e ON po.warehouse_id = e.warehouse_id
     WHERE po.warehouse_id = p_warehouse_id;
 END //
 
@@ -125,13 +124,14 @@ BEGIN
 END //
 
 CREATE OR REPLACE PROCEDURE createOrder(
-    IN p_warehouse_id INT,
     IN p_order_id INT
 )
 BEGIN
 
     INSERT INTO pending_orders (order_date, status_id, warehouse_id)
-    VALUES (CURRENT_DATE, 1, p_warehouse_id);
+    SELECT CURRENT_DATE, 1, warehouse_id
+    FROM staging_orders
+    WHERE order_id = p_order_id;
 
     SET @last_order_id = LAST_INSERT_ID();
 
@@ -146,7 +146,7 @@ BEGIN
             order_id = p_order_id;
 END//
 
-CREATE PROCEDURE insertStagingOrder(inputString TEXT)
+CREATE OR REPLACE PROCEDURE insertStagingOrder(inputString TEXT)
 BEGIN
     DECLARE value1 INT;
     DECLARE value2 INT;
@@ -200,10 +200,23 @@ BEGIN
             INSERT INTO staging_orders (order_id, product_id, warehouse_id, order_quantity) VALUES (orderid, value1, value2, value3);
         END WHILE;
 
+    CALL createOrder(orderid);
+
     COMMIT;
 
     DROP TEMPORARY TABLE IF EXISTS temp_table;
 
+END //
+
+CREATE OR REPLACE PROCEDURE getOrderDetails(
+    IN p_order_id INT
+)
+BEGIN
+    SELECT pr.product_name as 'Product name', os.order_quantity as 'Ordered quantity', pr.unit_of_measurement as 'Unit of measurement'
+    FROM pending_orders po
+             JOIN order_details os ON po.order_id = os.order_id
+             JOIN products pr ON pr.product_id = os.product_id
+    WHERE po.order_id = p_order_id;
 END //
 
 DELIMITER ;

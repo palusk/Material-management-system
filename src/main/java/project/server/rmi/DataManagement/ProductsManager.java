@@ -9,4 +9,10 @@ public class ProductsManager {
         new Connector().callStoredProcedure("insertStagingOrder", new Object[]{orderDetails}, false);
     }
 
+    public static String getOrdersInWarehouse(String warehouseID) {
+
+        return new Connector().callStoredProcedure("getOrdersInWarehouse", new Object[]{warehouseID}, true,false);
+    }
+
+
 }

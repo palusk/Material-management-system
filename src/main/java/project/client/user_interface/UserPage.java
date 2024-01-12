@@ -7,6 +7,7 @@ import project.client.RemoteManagerImpl;
 import project.client.interfaces.DataProviderRemote;
 import project.client.interfaces.RemoteManager;
 import project.client.user_interface.tabs.OrderTabCreator;
+import project.client.user_interface.tabs.PendingOrdersTabCreator;
 import project.client.user_interface.tabs.ProductsTabCreator;
 import project.client.user_interface.tabs.ProfileTabCreator;
 import java.rmi.NotBoundException;
@@ -31,7 +32,8 @@ public class UserPage {
             tabPane.getTabs().addAll(
                     OrderTabCreator.create(remoteManager, dataProvider),
                     ProductsTabCreator.create(remoteManager, dataProvider),
-                    ProfileTabCreator.create(windowManager)
+                    ProfileTabCreator.create(windowManager),
+                    PendingOrdersTabCreator.create(remoteManager, dataProvider)
             );
 
             pane.setCenter(tabPane);

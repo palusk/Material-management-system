@@ -23,4 +23,9 @@ public class DataProviderImpl extends UnicastRemoteObject implements project.cli
         return dataProvider.getAllProducts();
     }
 
+    @Override
+    public String getOrderDetails(String orderID) throws RemoteException {
+        return dataProvider.getOrderDetails(orderID);
+    }
+
 }

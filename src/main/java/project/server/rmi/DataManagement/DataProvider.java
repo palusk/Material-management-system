@@ -11,4 +11,9 @@ public class DataProvider {
     public String getAllProducts() {
         return new Connector().callStoredProcedure("getAllProducts", null, true, true);
     }
+
+    public String getOrderDetails(String orderID) {
+        return new Connector().callStoredProcedure("getOrderDetails", new Object[]{orderID}, true, true);
+    }
+
 }

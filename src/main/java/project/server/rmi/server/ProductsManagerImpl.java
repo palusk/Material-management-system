@@ -9,6 +9,8 @@ import java.rmi.server.UnicastRemoteObject;
 
 public class ProductsManagerImpl extends UnicastRemoteObject implements ProductsManagerRemote {
 
+    RMISessionManagerImpl sessionTest = new RMISessionManagerImpl();
+
     ProductsManager productsManager;
 
     public ProductsManagerImpl() throws RemoteException {
@@ -28,6 +30,10 @@ public class ProductsManagerImpl extends UnicastRemoteObject implements Products
 
     @Override
     public String listProductsToTransfer(String orderID) throws RemoteException {
+
+        // --TODO TESTOWANIE SESJI KLIENTA
+        sessionTest.registerClient();
+        System.out.println(sessionTest.getConnectedClients());
         return productsManager.listProductsToTransfer(orderID);
     }
 }

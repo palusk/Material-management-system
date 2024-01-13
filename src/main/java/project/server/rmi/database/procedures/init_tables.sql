@@ -114,9 +114,9 @@ BEGIN
 
     CREATE OR REPLACE TABLE users_profiles (
                                                profile_id INT,
-                                               user_id INT,
-                                               PRIMARY KEY (profile_id, user_id),
-                                               FOREIGN KEY (user_id) REFERENCES users(user_id),
+                                               employee_id INT,
+                                               PRIMARY KEY (profile_id, employee_id),
+                                               FOREIGN KEY (employee_id) REFERENCES users(employee_id),
                                                FOREIGN KEY (profile_id) REFERENCES profiles(profile_id)
     );
 

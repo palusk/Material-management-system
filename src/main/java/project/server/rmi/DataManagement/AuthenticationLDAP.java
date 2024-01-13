@@ -110,6 +110,7 @@ public class AuthenticationLDAP {
         return nameSurname;
     }
 
+    // --TODO AUTOMATYZUJ TWORZENIE UŻYTKOWNIKÓW NA SERWERZE LDAP PODCZAS ŁADOWANIA PLIKU CSV Z PRACOWNIKAMI
     public void addUser() {
         Attributes attributes = new BasicAttributes();
         Attribute attribute = new BasicAttribute("objectClass");

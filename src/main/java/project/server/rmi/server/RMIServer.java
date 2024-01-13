@@ -1,17 +1,13 @@
 package project.server.rmi.server;
 
-import project.client.interfaces.AuthenticationLDAPRemote;
-import project.client.interfaces.HierarchyManagerRemote;
-import project.client.interfaces.ProductsLoaderRemote;
-import project.client.interfaces.ProfilesManagerRemote;
-
+import project.client.interfaces.*;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
 public class RMIServer {
     public static void main(String[] args) {
         try {
-            // Rejestruj obiekty zdalne w rejestrze RMI
+
             Registry registry = LocateRegistry.createRegistry(1099);
 
             ProductsLoaderRemote productsLoaderRemote = new ProductsLoaderImpl();
@@ -22,6 +18,12 @@ public class RMIServer {
 
             ProfilesManagerRemote profilesManagerRemote = new ProfilesManagerImpl();
             registry.rebind("ProfilesManager", profilesManagerRemote);
+
+            DataProviderRemote dataProviderRemote = new DataProviderImpl();
+            registry.rebind("DataProvider", dataProviderRemote);
+
+            ProductsManagerRemote productsManagerRemote = new ProductsManagerImpl();
+            registry.rebind("ProductsManager", productsManagerRemote);
 
             AuthenticationLDAPRemote authenticationLDAPRemote = new AuthenticationLDAPImpl();
             registry.rebind("AuthenticationLDAP", authenticationLDAPRemote);

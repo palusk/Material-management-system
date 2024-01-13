@@ -1,6 +1,7 @@
 package project.server.rmi.database;
 
 import java.sql.*;
+import java.util.Arrays;
 import java.util.List;
 
 public class Connector {
@@ -33,6 +34,22 @@ public class Connector {
             }
         }
 
+    public String callStoredProcedure(String procedureName, Object[] input, boolean outputFlag, boolean withNames) {
+        try {
+            String result = executeCall(getCon(), procedureName, input, outputFlag);
+            if(outputFlag == true) {
+                if (!withNames){
+                    String[] lines = result.split("\n");
+                    result = String.join("\n", Arrays.copyOfRange(lines, 1, lines.length));
+                }
+                return result;
+            }
+            else return "No output";
+        } catch (SQLException e) {
+            return "An error has occurred please contact your administrator";
+        }
+    }
+
     public static String executeCall(Connection connection, String procedureName, Object[] input, boolean outputFlag) throws SQLException {
         String result = "No output";
 
@@ -53,6 +70,7 @@ public class Connector {
                 }
             }
         } catch (SQLException e) {
+            System.out.println(e);
             return "An error has occurred. Please contact your administrator";
         }
 
@@ -106,12 +124,16 @@ public class Connector {
     }
 
     public String insertDataIntoStaging(List<String> inputString, String procedureName, int columnsNumber) {
+        System.out.println(inputString);
+
         StringBuilder failedRows = new StringBuilder();
         Integer rowNumber = 0;
 
         for (String line : inputString) {
             if (!line.trim().isEmpty()) {
                 String[] columns = line.split(";");
+                System.out.println(columnsNumber);
+                System.out.println(columns.length);
                 if (columns.length == columnsNumber) {
                     try {
                         callStoredProcedure(procedureName, columns, false);

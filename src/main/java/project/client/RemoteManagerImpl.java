@@ -1,7 +1,6 @@
 package project.client;
 
 import project.client.interfaces.*;
-
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -35,6 +34,18 @@ public class RemoteManagerImpl extends UnicastRemoteObject implements RemoteMana
     public AuthenticationLDAPRemote getAuthenticationLDAP() throws RemoteException, NotBoundException {
         Registry registry = LocateRegistry.getRegistry("localhost", 1099);
         return (AuthenticationLDAPRemote) registry.lookup("AuthenticationLDAP");
+    }
+
+    @Override
+    public DataProviderRemote getDataProvider() throws RemoteException, NotBoundException {
+        Registry registry = LocateRegistry.getRegistry("localhost", 1099);
+        return (DataProviderRemote) registry.lookup("DataProvider");
+    }
+
+    @Override
+    public ProductsManagerRemote getProductsManager() throws RemoteException, NotBoundException {
+        Registry registry = LocateRegistry.getRegistry("localhost", 1099);
+        return (ProductsManagerRemote) registry.lookup("ProductsManager");
     }
 
 }

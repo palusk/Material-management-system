@@ -24,6 +24,8 @@ public class ExcelImporter {
         } catch (IOException | CsvValidationException e) {
             e.printStackTrace();
         }
+
+        System.out.println(dataList);
         return dataList;
     }
 

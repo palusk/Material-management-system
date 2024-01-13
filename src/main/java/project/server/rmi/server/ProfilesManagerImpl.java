@@ -2,9 +2,9 @@ package project.server.rmi.server;
 
 import project.server.rmi.DataManagement.ProfilesManager;
 import project.client.interfaces.ProfilesManagerRemote;
-
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.List;
 
 public class ProfilesManagerImpl extends UnicastRemoteObject implements ProfilesManagerRemote {
     private ProfilesManager profilesManager;
@@ -22,6 +22,11 @@ public class ProfilesManagerImpl extends UnicastRemoteObject implements Profiles
     @Override
     public String getProfiles() throws RemoteException {
         return profilesManager.getProfiles();
+    }
+
+    @Override
+    public List<String> getWarehouseDropdown(int userID) {
+        return profilesManager.getWarehouseDropdown(userID);
     }
 
 }

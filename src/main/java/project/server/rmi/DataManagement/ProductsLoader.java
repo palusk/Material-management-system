@@ -6,7 +6,6 @@ import java.util.List;
 
 public class ProductsLoader {
 
-    private static Connector database = new Connector();
     private static ExcelImporter importer = new ExcelImporter();
 
     public static String loadProductsFromCSV(String csvFile) throws SQLException {
@@ -19,15 +18,15 @@ public class ProductsLoader {
             } else {
                 error = "Load for following rows failed: " + error;
             }
-
+            System.out.println(error);
             return "CSV succesfull";
         } catch (Exception e) {
-            // Log the exception using a logging framework
+
             return "CSV read failed";
         }
     }
 
-    public static String insertDataIntoStaging(List<String> inputString) throws SQLException {
+    public static String insertDataIntoStaging(List<String> inputString) {
         return new Connector().insertDataIntoStaging(inputString,"InsertStagingProductInStock",4);
     }
 

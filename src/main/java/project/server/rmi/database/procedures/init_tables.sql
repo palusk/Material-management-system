@@ -120,6 +120,14 @@ BEGIN
                                                FOREIGN KEY (profile_id) REFERENCES profiles(profile_id)
     );
 
+    CREATE TABLE staging_orders (
+                                    order_id INT,
+                                    warehouse_id INT,
+                                    product_id INT,
+                                    order_quantity INT,
+                                    PRIMARY KEY (order_id, product_id)
+    );
+
 END //
 
 DELIMITER ;

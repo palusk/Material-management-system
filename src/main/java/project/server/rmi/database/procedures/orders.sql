@@ -129,7 +129,7 @@ CREATE OR REPLACE PROCEDURE createOrder(
 BEGIN
 
     INSERT INTO pending_orders (order_date, status_id, warehouse_id)
-    SELECT CURRENT_DATE, 1, warehouse_id
+    SELECT DISTINCT CURRENT_DATE, 1, warehouse_id
     FROM staging_orders
     WHERE order_id = p_order_id;
 

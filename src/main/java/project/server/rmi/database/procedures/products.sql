@@ -161,74 +161,115 @@ BEGIN
     END IF;
 END //
 
+
 CREATE OR REPLACE PROCEDURE listProductsToTransfer(
+    IN in_order_id INT
+)
+BEGIN
+
+    DECLARE source_warehouse_id INT;
+    DECLARE transferred_product_id INT;
+    DECLARE transferred_quantity INT;
+    DECLARE done INT DEFAULT FALSE;
+    DECLARE cur CURSOR FOR
+
+        SELECT po.warehouse_id, od.product_id, od.order_quantity
+        FROM order_details od
+                 JOIN pending_orders po ON od.order_id = po.order_id
+        WHERE od.order_id = in_order_id;
+
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+    START TRANSACTION;
+    CREATE TEMPORARY TABLE IF NOT EXISTS products_list (
+                                                           expiration_date DATE,
+                                                           quantity INT,
+                                                           product_name VARCHAR(255)
+    );
+    OPEN cur;
+
+    read_loop: LOOP
+        FETCH cur INTO source_warehouse_id, transferred_product_id, transferred_quantity;
+
+        IF done THEN
+            LEAVE read_loop;
+        END IF;
+
+        CALL listProductsToTransferForSingleRow(source_warehouse_id, transferred_product_id, transferred_quantity);
+    END LOOP read_loop;
+    SELECT * FROM products_list;
+    DROP TEMPORARY TABLE IF EXISTS products_list;
+    CLOSE cur;
+    COMMIT;
+END //
+
+
+
+
+CREATE OR REPLACE PROCEDURE listProductsToTransferForSingleRow(
     source_warehouse_id INT,
-    destination_warehouse_id INT,
     transferred_product_id INT,
     transferred_quantity INT
 )
 BEGIN
-    DECLARE quantity_sum INT;
     DECLARE available_quantity INT;
-    DECLARE expired_quantity INT;
+    DECLARE name VARCHAR(255);
     DECLARE expiration_date DATE;
     DECLARE done INT DEFAULT FALSE;
     DECLARE cur CURSOR FOR SELECT * FROM temp_available_products;
     DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
 
-    START TRANSACTION;
-
-    -- Create a temporary table to store available products
     CREATE TEMPORARY TABLE IF NOT EXISTS temp_available_products (
                                                                      expiration_date DATE,
                                                                      quantity INT
     );
 
-    -- Calculate the total quantity of the transferred product in the source warehouse
-    SELECT SUM(quantity) INTO quantity_sum
-    FROM products_in_stock
-    WHERE warehouse_id = source_warehouse_id
-      AND product_id = transferred_product_id
-      AND expiration_date > NOW();
+    CREATE TEMPORARY TABLE IF NOT EXISTS products_list (
+                                                           expiration_date DATE,
+                                                           quantity INT,
+                                                           product_name VARCHAR(255)
+    );
 
-    -- Check if there is enough quantity to transfer
-    IF quantity_sum >= transferred_quantity THEN
+    SELECT p.product_name INTO name
+    FROM products p
+    WHERE p.product_id= transferred_product_id;
 
-        -- Insert available products into the temporary table
-        INSERT INTO temp_available_products (expiration_date, quantity)
-        SELECT expiration_date, quantity
-        FROM products_in_stock
-        WHERE warehouse_id = source_warehouse_id
-          AND product_id = transferred_product_id
-          AND expiration_date > NOW()
-        ORDER BY expiration_date ASC;
+    INSERT INTO temp_available_products (expiration_date, quantity)
+    SELECT pis.expiration_date, pis.quantity
+    FROM products_in_stock pis
+    WHERE pis.warehouse_id = source_warehouse_id
+      AND pis.product_id = transferred_product_id
+      AND pis.expiration_date > NOW()
+    ORDER BY pis.expiration_date ASC;
 
-        OPEN cur;
+    OPEN cur;
 
-        product_loop: LOOP
-            FETCH cur INTO expiration_date, available_quantity;
+    product_loop: LOOP
+        FETCH cur INTO expiration_date, available_quantity;
 
-            -- Check if there is enough quantity to transfer
+
+        IF done THEN
+            INSERT INTO products_list
+            SELECT null , CONCAT('-',transferred_quantity), name;
+            LEAVE product_loop;
+        ELSE
             IF transferred_quantity <= available_quantity THEN
-                -- Display or process the available product data as needed
-                SELECT expiration_date, available_quantity;
+                INSERT INTO products_list
+                SELECT expiration_date, transferred_quantity, name;
                 LEAVE product_loop;
             ELSE
-                SELECT expiration_date, available_quantity;
+                INSERT INTO products_list
+                SELECT expiration_date, available_quantity, name;
                 SET transferred_quantity = transferred_quantity - available_quantity;
             END IF;
+        END IF;
 
-        END LOOP product_loop;
+    END LOOP product_loop;
 
-        CLOSE cur;
+    CLOSE cur;
 
-        DROP TEMPORARY TABLE IF EXISTS temp_available_products;
+    DROP TEMPORARY TABLE IF EXISTS temp_available_products;
 
-        COMMIT;
-
-    ELSE
-        ROLLBACK;
-    END IF;
 END //
 
 DELIMITER ;

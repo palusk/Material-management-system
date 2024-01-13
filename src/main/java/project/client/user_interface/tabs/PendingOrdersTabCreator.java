@@ -10,6 +10,7 @@ import project.client.interfaces.DataProviderRemote;
 import project.client.interfaces.ProductsManagerRemote;
 import project.client.interfaces.ProfilesManagerRemote;
 import project.client.interfaces.RemoteManager;
+
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.List;
@@ -21,13 +22,29 @@ public class PendingOrdersTabCreator {
         ProfilesManagerRemote profilesManager = remoteManager.getProfilesManager();
         ProductsManagerRemote productsManager = remoteManager.getProductsManager();
         TableView<ObservableList<String>> tableView = new TableView<>();
-
+        Label resultLabel = new Label();
 
         ComboBox<String> secondDropdown = createSecondDropdown(dataProvider, tableView, tableManager);
         ComboBox<String> firstDropdown = createDropdown(profilesManager.getWarehouseDropdown(2), dataProvider, tableView, tableManager, secondDropdown, productsManager);
 
+        Button generateProductsListButton = new Button("Generate Products List");
+        generateProductsListButton.setOnAction(event -> {
 
-        VBox vbox = new VBox(firstDropdown, secondDropdown, tableView);
+                if(secondDropdown.equals("Select a value")){
+                    resultLabel.setText("Choose an order");
+                }else{
+                    try {
+                        String selectedValue = secondDropdown.getValue();
+                        int index = selectedValue.indexOf(" ");
+                        String orderID = selectedValue.substring(0, index);
+                        tableManager.printTable(productsManager.listProductsToTransfer(orderID), tableView);
+                    } catch (RemoteException e) {
+                        throw new RuntimeException(e);
+                    }
+            }
+        });
+
+        VBox vbox = new VBox(firstDropdown, secondDropdown, generateProductsListButton, resultLabel,tableView);
         vbox.setPadding(new Insets(10));
 
         tab.setContent(vbox);
@@ -35,7 +52,7 @@ public class PendingOrdersTabCreator {
         return tab;
     }
 
-    private static ComboBox<String> createDropdown(List<String> warehouseDropdown, DataProviderRemote dataProvider, TableView<ObservableList<String>> tableView, TableManager tableManager, ComboBox<String> secondDropdown,  ProductsManagerRemote productsManager) {
+    private static ComboBox<String> createDropdown(List<String> warehouseDropdown, DataProviderRemote dataProvider, TableView<ObservableList<String>> tableView, TableManager tableManager, ComboBox<String> secondDropdown, ProductsManagerRemote productsManager) {
         ComboBox<String> dropdown = new ComboBox<>();
 
         dropdown.setItems(FXCollections.observableArrayList(warehouseDropdown));
@@ -43,6 +60,7 @@ public class PendingOrdersTabCreator {
 
         dropdown.setOnAction(event -> {
             try {
+                secondDropdown.setValue("Select a value");
                 String selectedValue = dropdown.getValue();
                 int index = selectedValue.indexOf(" ");
                 String warehouseID = selectedValue.substring(0, index);

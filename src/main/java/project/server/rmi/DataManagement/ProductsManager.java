@@ -14,5 +14,7 @@ public class ProductsManager {
         return new Connector().callStoredProcedure("getOrdersInWarehouse", new Object[]{warehouseID}, true,false);
     }
 
-
+    public static String listProductsToTransfer(String orderIDs) {
+        return new Connector().callStoredProcedure("listProductsToTransfer", new Object[]{orderIDs}, true,true);
+    }
 }

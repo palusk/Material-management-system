@@ -25,4 +25,9 @@ public class ProductsManagerImpl extends UnicastRemoteObject implements Products
     public String getOrdersInWarehouse(String warehouseID) throws RemoteException {
         return productsManager.getOrdersInWarehouse(warehouseID);
     }
+
+    @Override
+    public String listProductsToTransfer(String orderID) throws RemoteException {
+        return productsManager.listProductsToTransfer(orderID);
+    }
 }

@@ -31,7 +31,7 @@ public class ProductsManagerImpl extends UnicastRemoteObject implements Products
     @Override
     public String listProductsToTransfer(String orderID) throws RemoteException {
 
-        // --TODO TESTOWANIE SESJI KLIENTA
+        // --TODO SPRAWDZIĆ CZY MOŻNA WYCIĄGNĄĆ PARAMETR DO ROZPOZNANIA DANEGO UŻYTKOWNIKA (W CELU UZYSKANIA LUB OGRANICZENIA WYBRANYCH OPCJI SYSTEMU)
         sessionTest.registerClient();
         System.out.println(sessionTest.getConnectedClients());
         return productsManager.listProductsToTransfer(orderID);

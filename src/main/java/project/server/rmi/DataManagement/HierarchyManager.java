@@ -10,11 +10,38 @@ public class HierarchyManager {
 
     public static String loadEmployeesFromCSV(String csvFile) throws SQLException {
         try {
+            AuthenticationLDAP addUserLDAP = new AuthenticationLDAP();
+
+            boolean checkIfUserAddedToLDAP = false;
+
             List<String> dataList = importer.csvReader(csvFile);
+
             String error = HierarchyManager.insertDataIntoStaging(dataList);
 
             if (error.isEmpty()) {
-                error = HierarchyManager.triggerValidation();
+                    for (String line : dataList) {
+                        String[] columns = line.split(";");
+
+                        if (columns.length >= 3) {
+                            String firstname = columns[0].trim();
+                            String lastname = columns[1].trim();
+                            String email = columns[2].trim();
+
+                            //System.out.println("Firstname: " + firstname + ", Lastname: " + lastname + ", Email: " + email);
+                            if(addUserLDAP.addUser(firstname, lastname, email)){
+                                checkIfUserAddedToLDAP = true;
+                            }
+
+                        } else {
+                            // Error jeśli linia nie ma wystarczającej liczby kolumn
+                            System.err.println("Invalid CSV line: " + line);
+                            checkIfUserAddedToLDAP = false;
+                        }
+                    }
+                    if(checkIfUserAddedToLDAP){
+                        //-- TODO DLACZEGO DO NASZEJ BAZY DANYCH DODAJE SIE TYLKO PIERWSZA LINIA Z CSV
+                        error = HierarchyManager.triggerValidation();
+                    }else System.err.println("Adding users to LDAP server has failed, validation has not been triggered.");
             } else {
                 error = "Load for following rows failed: " + error;
             }
@@ -24,6 +51,9 @@ public class HierarchyManager {
             return "CSV read failed";
         }
     }
+
+
+
 
     private static String insertDataIntoStaging(List<String> inputString) {
         return new Connector().insertDataIntoStaging(inputString,"InsertStagingEmployees",5);

@@ -110,23 +110,31 @@ public class AuthenticationLDAP {
         return nameSurname;
     }
 
-    // --TODO AUTOMATYZUJ TWORZENIE UŻYTKOWNIKÓW NA SERWERZE LDAP PODCZAS ŁADOWANIA PLIKU CSV Z PRACOWNIKAMI
-    public void addUser() {
+    public boolean addUser(String cn, String sn, String mail) {
+
+        boolean success = false;
+
+        String uid = Character.toString(Character.toLowerCase(cn.charAt(0))) + sn;
+        uid = uid.toLowerCase();
+
         Attributes attributes = new BasicAttributes();
         Attribute attribute = new BasicAttribute("objectClass");
         attribute.add("inetOrgPerson");
 
         attributes.put(attribute);
         // podstawowe dane usera
-        attributes.put("cn", "Kamil");
-        attributes.put("sn", "Palus");
+        attributes.put("cn", cn);
+        attributes.put("sn", sn);
+        attributes.put("mail", mail);
         try {
-            connection.createSubcontext("uid=kpalus,ou=users,ou=system", attributes);
-            System.out.println("New user has been added to the server!");
+            connection.createSubcontext("uid=" + uid + ",ou=users,ou=system", attributes);
+            System.out.println("New user with uid: " + uid + " has been added to the server!");
+            success = true;
         } catch (NamingException e) {
             e.printStackTrace();
             System.out.println("Creation of new user failed!");
         }
+        return success;
     }
 
     public void addUserToGroup(String username, String groupName) {

@@ -15,7 +15,6 @@ public class HierarchyManager {
             boolean checkIfUserAddedToLDAP = false;
 
             List<String> dataList = importer.csvReader(csvFile);
-
             String error = HierarchyManager.insertDataIntoStaging(dataList);
 
             if (error.isEmpty()) {

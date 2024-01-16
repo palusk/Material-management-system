@@ -17,4 +17,13 @@ public class ProductsManager {
     public static String listProductsToTransfer(String orderIDs) {
         return new Connector().callStoredProcedure("listProductsToTransfer", new Object[]{orderIDs}, true,true);
     }
+
+    public static String cancelOrder(String orderIDs) {
+        return new Connector().callStoredProcedure("cancelOrder", new Object[]{orderIDs}, false,false);
+    }
+
+    public static String completeOrder(String orderIDs) {
+        new Connector().callStoredProcedure("completeOrder", new Object[]{orderIDs}, false,false);
+        return new Connector().callStoredProcedure("completeOrder", new Object[]{orderIDs}, false,false);
+    }
 }

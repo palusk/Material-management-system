@@ -36,4 +36,16 @@ public class ProductsManagerImpl extends UnicastRemoteObject implements Products
         System.out.println(sessionTest.getConnectedClients());
         return productsManager.listProductsToTransfer(orderID);
     }
+
+    @Override
+    public String cancelOrder(String orderID) throws RemoteException {
+        return productsManager.cancelOrder(orderID);
+    }
+
+    @Override
+    public String completeOrder(String orderID) throws RemoteException {
+        return productsManager.completeOrder(orderID);
+    }
+
+
 }

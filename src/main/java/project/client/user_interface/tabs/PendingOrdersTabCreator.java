@@ -44,7 +44,61 @@ public class PendingOrdersTabCreator {
             }
         });
 
-        VBox vbox = new VBox(firstDropdown, secondDropdown, generateProductsListButton, resultLabel,tableView);
+        Button cancelOrder = new Button("Cancel order");
+        cancelOrder.setOnAction(event -> {
+
+            if(secondDropdown.equals("Select a value")){
+                resultLabel.setText("Choose an order");
+            }else{
+                try {
+                    String selectedValue = secondDropdown.getValue();
+                    int index = selectedValue.indexOf(" ");
+                    String orderID = selectedValue.substring(0, index);
+                    productsManager.cancelOrder(orderID);
+
+                    String selectedWarehouseValue = firstDropdown.getValue();
+                    int warehouseIndex = selectedWarehouseValue.indexOf(" ");
+                    String warehouseID = selectedWarehouseValue.substring(0, warehouseIndex);
+                    String ordersString = productsManager.getOrdersInWarehouse(warehouseID);
+                    ordersString = ordersString.replace("\n", "");
+                    String[] ordersArray = ordersString.split(";");
+                    ObservableList<String> ordersList = FXCollections.observableArrayList(ordersArray);
+                    secondDropdown.setItems(ordersList);
+                    secondDropdown.setDisable(false);
+                } catch (RemoteException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+
+        Button completeOrder = new Button("Complete order");
+        completeOrder.setOnAction(event -> {
+
+            if(secondDropdown.equals("Select a value")){
+                resultLabel.setText("Choose an order");
+            }else{
+                try {
+                    String selectedValue = secondDropdown.getValue();
+                    int index = selectedValue.indexOf(" ");
+                    String orderID = selectedValue.substring(0, index);
+                    productsManager.completeOrder(orderID);
+
+                    String selectedWarehouseValue = firstDropdown.getValue();
+                    int warehouseIndex = selectedWarehouseValue.indexOf(" ");
+                    String warehouseID = selectedWarehouseValue.substring(0, warehouseIndex);
+                    String ordersString = productsManager.getOrdersInWarehouse(warehouseID);
+                    ordersString = ordersString.replace("\n", "");
+                    String[] ordersArray = ordersString.split(";");
+                    ObservableList<String> ordersList = FXCollections.observableArrayList(ordersArray);
+                    secondDropdown.setItems(ordersList);
+                    secondDropdown.setDisable(false);
+                } catch (RemoteException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+
+        VBox vbox = new VBox(firstDropdown, secondDropdown, generateProductsListButton, resultLabel,tableView, cancelOrder, completeOrder);
         vbox.setPadding(new Insets(10));
 
         tab.setContent(vbox);
@@ -86,18 +140,17 @@ public class PendingOrdersTabCreator {
         // Początkowo drugi dropdown jest pusty
         dropdown.setValue("Select a value");
         dropdown.setDisable(true);
-
+        String selectedValue = dropdown.getValue();
         dropdown.setOnAction(event -> {
+            if(selectedValue.isEmpty()){
             try {
-                String selectedValue = dropdown.getValue();
                 int index = selectedValue.indexOf(" ");
                 String orderID = selectedValue.substring(0, index);
-
                 tableManager.printTable(dataProvider.getOrderDetails(orderID), tableView);
             } catch (RemoteException e) {
                 throw new RuntimeException(e);
             }
-        });
+        }});
 
         return dropdown;
     }

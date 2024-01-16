@@ -219,4 +219,22 @@ BEGIN
     WHERE po.order_id = p_order_id;
 END //
 
+CREATE OR REPLACE PROCEDURE cancelOrder(
+    IN p_order_id INT
+)
+BEGIN
+    UPDATE pending_orders po
+    SET po.status_id = 3
+    WHERE po.order_id = p_order_id;
+END //
+
+CREATE OR REPLACE PROCEDURE completeOrder(
+    IN p_order_id INT
+)
+BEGIN
+    UPDATE pending_orders po
+    SET po.status_id = 2
+    WHERE po.order_id = p_order_id;
+END //
+
 DELIMITER ;

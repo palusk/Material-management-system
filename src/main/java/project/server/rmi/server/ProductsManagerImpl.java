@@ -6,6 +6,7 @@ import project.server.rmi.DataManagement.ProductsManager;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.List;
 
 public class ProductsManagerImpl extends UnicastRemoteObject implements ProductsManagerRemote {
 
@@ -45,6 +46,11 @@ public class ProductsManagerImpl extends UnicastRemoteObject implements Products
     @Override
     public String completeOrder(String orderID) throws RemoteException {
         return productsManager.completeOrder(orderID);
+    }
+
+    @Override
+    public List<String> getAllWarehouses() throws RemoteException {
+        return productsManager.getAllWarehouses();
     }
 
 

@@ -107,15 +107,6 @@ BEGIN
     WHERE ps.warehouse_id = p_warehouse_id;
 END //
 
-CREATE OR REPLACE PROCEDURE transferProducts(
-    IN p_order_id INT
-)
-BEGIN
-
-    SELECT
-
-END //
-
 CREATE OR REPLACE PROCEDURE transferProduct(
     source_warehouse_id INT,
     destination_warehouse_id INT,
@@ -190,6 +181,7 @@ BEGIN
     DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
 
     START TRANSACTION;
+
     CREATE TEMPORARY TABLE IF NOT EXISTS products_list (
                                                            expiration_date DATE,
                                                            quantity INT,

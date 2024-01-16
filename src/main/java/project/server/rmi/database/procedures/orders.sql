@@ -128,8 +128,8 @@ CREATE OR REPLACE PROCEDURE createOrder(
 )
 BEGIN
 
-    INSERT INTO pending_orders (order_date, status_id, warehouse_id)
-    SELECT DISTINCT CURRENT_DATE, 1, warehouse_id
+    INSERT INTO pending_orders (order_date, status_id, warehouse_id, ordering_warehouse_id)
+    SELECT DISTINCT CURRENT_DATE, 1, warehouse_id, ordering_warehouse_id
     FROM staging_orders
     WHERE order_id = p_order_id;
 
@@ -151,6 +151,7 @@ BEGIN
     DECLARE value1 INT;
     DECLARE value2 INT;
     DECLARE value3 INT;
+    DECLARE value4 INT;
     DECLARE orderid INT;
     DECLARE startIndex INT DEFAULT 1;
     DECLARE nextIndex INT;
@@ -165,7 +166,8 @@ BEGIN
     CREATE TEMPORARY TABLE IF NOT EXISTS temp_table (
                                                         column1 INT,
                                                         column2 INT,
-                                                        column3 INT
+                                                        column3 INT,
+                                                        column4 INT
     );
 
     WHILE startIndex <= LENGTH(inputString) DO
@@ -196,8 +198,17 @@ BEGIN
             SET value3 = SUBSTRING(inputString, startIndex, nextIndex - startIndex);
             SET startIndex = nextIndex + 1;
 
+            SET nextIndex = LOCATE(';', inputString, startIndex);
 
-            INSERT INTO staging_orders (order_id, product_id, warehouse_id, order_quantity) VALUES (orderid, value1, value2, value3);
+            IF nextIndex = 0 THEN
+                SET nextIndex = LENGTH(inputString) + 1;
+            END IF;
+
+            SET value4 = SUBSTRING(inputString, startIndex, nextIndex - startIndex);
+            SET startIndex = nextIndex + 1;
+
+
+            INSERT INTO staging_orders (order_id, product_id, warehouse_id, order_quantity, ordering_warehouse_id) VALUES (orderid, value1, value2, value3, value4);
         END WHILE;
 
     CALL createOrder(orderid);
@@ -232,9 +243,85 @@ CREATE OR REPLACE PROCEDURE completeOrder(
     IN p_order_id INT
 )
 BEGIN
+    DECLARE source_warehouse_id INT;
+    DECLARE transferred_product_id INT;
+    DECLARE transferred_quantity INT;
+    DECLARE v_warehouse_id INT;
+    DECLARE v_ordering_warehouse_id INT;
+    DECLARE v_product_id INT;
+    DECLARE v_order_quantity INT;
+    DECLARE v_expiration_date DATE;
+    DECLARE done INT DEFAULT FALSE;
+
+    DECLARE cur CURSOR FOR
+        SELECT po.warehouse_id, od.product_id, od.order_quantity
+        FROM order_details od
+                 JOIN pending_orders po ON od.order_id = po.order_id
+        WHERE od.order_id = p_order_id;
+
+    DECLARE cur_orders CURSOR FOR
+        SELECT po.warehouse_id, po.ordering_warehouse_id, od.product_id, od.order_quantity, pl.expiration_date
+        FROM order_details od
+                 JOIN pending_orders po ON od.order_id = po.order_id
+                 JOIN products p ON od.product_id = p.product_id
+                 JOIN products_list pl ON p.product_name = pl.product_name
+        WHERE od.order_id = p_order_id;
+
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+    CREATE TEMPORARY TABLE IF NOT EXISTS products_list_transfer (
+                                                                    expiration_date DATE,
+                                                                    quantity INT,
+                                                                    product_name VARCHAR(255)
+    );
+
+    START TRANSACTION;
     UPDATE pending_orders po
     SET po.status_id = 2
     WHERE po.order_id = p_order_id;
-END //
+
+
+    CREATE TEMPORARY TABLE IF NOT EXISTS products_list (
+                                                           expiration_date DATE,
+                                                           quantity INT,
+                                                           product_name VARCHAR(255)
+    );
+    OPEN cur;
+
+    read_loop: LOOP
+        FETCH cur INTO source_warehouse_id, transferred_product_id, transferred_quantity;
+
+        IF done THEN
+            LEAVE read_loop;
+        END IF;
+
+        CALL listProductsToTransferForSingleRow(source_warehouse_id, transferred_product_id, transferred_quantity);
+    END LOOP read_loop;
+    SELECT * FROM products_list;
+    CLOSE cur;
+
+    SET done = FALSE;
+
+    OPEN cur_orders;
+
+    read_loop: LOOP
+        FETCH cur_orders INTO v_warehouse_id, v_ordering_warehouse_id, v_product_id, v_order_quantity, v_expiration_date;
+
+        IF done THEN
+            LEAVE read_loop;
+        END IF;
+
+        IF v_expiration_date is not null THEN
+            CALL transferProduct(v_warehouse_id, v_ordering_warehouse_id, v_product_id, v_order_quantity, v_expiration_date);
+        END IF;
+    END LOOP;
+
+    CLOSE cur_orders;
+
+    DROP TEMPORARY TABLE IF EXISTS products_list;
+
+    COMMIT;
+
+END//
 
 DELIMITER ;

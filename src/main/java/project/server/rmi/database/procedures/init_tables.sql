@@ -42,6 +42,7 @@ BEGIN
 
     CREATE OR REPLACE TABLE pending_orders (
                                                order_id INT AUTO_INCREMENT PRIMARY KEY,
+                                               ordering_warehouse_id INT,
                                                order_date DATE,
                                                status_id INT,
                                                warehouse_id INT,
@@ -123,6 +124,7 @@ BEGIN
     CREATE TABLE staging_orders (
                                     order_id INT,
                                     warehouse_id INT,
+                                    ordering_warehouse_id INT,
                                     product_id INT,
                                     order_quantity INT,
                                     PRIMARY KEY (order_id, product_id)

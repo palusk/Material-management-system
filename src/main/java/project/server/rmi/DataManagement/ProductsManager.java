@@ -2,6 +2,9 @@ package project.server.rmi.DataManagement;
 
 import project.server.rmi.database.Connector;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class ProductsManager {
 
     public static void insertStagingOrder(String orderDetails) {
@@ -23,7 +26,19 @@ public class ProductsManager {
     }
 
     public static String completeOrder(String orderIDs) {
-        new Connector().callStoredProcedure("completeOrder", new Object[]{orderIDs}, false,false);
+        //new Connector().callStoredProcedure("completeOrder", new Object[]{orderIDs}, false,false);
         return new Connector().callStoredProcedure("completeOrder", new Object[]{orderIDs}, false,false);
     }
+
+    public static String getAllWarehousesString() {
+        return new Connector().callStoredProcedure("getAllWarehouses", null, true,false);
+    }
+
+    public List<String> getAllWarehouses(){
+            String warehouseString = getAllWarehousesString();
+            List<String> warehouseList = Arrays.asList(warehouseString.split("\n"));
+            System.out.println(warehouseList);
+            return warehouseList;
+    }
+
 }

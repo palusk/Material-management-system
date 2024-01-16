@@ -64,6 +64,7 @@ public class PendingOrdersTabCreator {
                     String[] ordersArray = ordersString.split(";");
                     ObservableList<String> ordersList = FXCollections.observableArrayList(ordersArray);
                     secondDropdown.setItems(ordersList);
+
                     secondDropdown.setDisable(false);
                 } catch (RemoteException e) {
                     throw new RuntimeException(e);
@@ -90,6 +91,7 @@ public class PendingOrdersTabCreator {
                     ordersString = ordersString.replace("\n", "");
                     String[] ordersArray = ordersString.split(";");
                     ObservableList<String> ordersList = FXCollections.observableArrayList(ordersArray);
+                    secondDropdown.setValue("Select a value");
                     secondDropdown.setItems(ordersList);
                     secondDropdown.setDisable(false);
                 } catch (RemoteException e) {
@@ -140,12 +142,14 @@ public class PendingOrdersTabCreator {
         // Początkowo drugi dropdown jest pusty
         dropdown.setValue("Select a value");
         dropdown.setDisable(true);
-        String selectedValue = dropdown.getValue();
         dropdown.setOnAction(event -> {
-            if(selectedValue.isEmpty()){
+            String selectedValue = dropdown.getValue();
+            if(selectedValue != null){
             try {
                 int index = selectedValue.indexOf(" ");
                 String orderID = selectedValue.substring(0, index);
+                System.out.println(orderID);
+                System.out.println(dataProvider.getOrderDetails(orderID));
                 tableManager.printTable(dataProvider.getOrderDetails(orderID), tableView);
             } catch (RemoteException e) {
                 throw new RuntimeException(e);

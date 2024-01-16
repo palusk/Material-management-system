@@ -260,7 +260,7 @@ BEGIN
         WHERE od.order_id = p_order_id;
 
     DECLARE cur_orders CURSOR FOR
-        SELECT po.warehouse_id, po.ordering_warehouse_id, od.product_id, od.order_quantity, pl.expiration_date
+        SELECT po.warehouse_id, po.ordering_warehouse_id, od.product_id, pl.quantity, pl.expiration_date
         FROM order_details od
                  JOIN pending_orders po ON od.order_id = po.order_id
                  JOIN products p ON od.product_id = p.product_id

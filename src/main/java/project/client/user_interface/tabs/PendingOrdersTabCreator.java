@@ -91,7 +91,6 @@ public class PendingOrdersTabCreator {
                     ordersString = ordersString.replace("\n", "");
                     String[] ordersArray = ordersString.split(";");
                     ObservableList<String> ordersList = FXCollections.observableArrayList(ordersArray);
-                    secondDropdown.setValue("Select a value");
                     secondDropdown.setItems(ordersList);
                     secondDropdown.setDisable(false);
                 } catch (RemoteException e) {

@@ -1,6 +1,6 @@
 package project.server.rmi.DataManagement;
 
-import project.server.rmi.database.Connector;
+import project.client.user_interface.tabs.database.Connector;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -38,13 +38,14 @@ public class HierarchyManager {
                         }
                     }
                     if(checkIfUserAddedToLDAP){
-                        //-- TODO DLACZEGO DO NASZEJ BAZY DANYCH DODAJE SIE TYLKO PIERWSZA LINIA Z CSV
                         error = HierarchyManager.triggerValidation();
+                        System.out.println("Validation of new users have been run successful.");
                     }else System.err.println("Adding users to LDAP server has failed, validation has not been triggered.");
             } else {
                 error = "Load for following rows failed: " + error;
             }
 
+            // -- TODO METODA DO SPRAWDZENIA UŻYTKOWNIKOW Z SERWERA LDAP ORAZ TABELĄ EMPLOYEES
             return error;
         } catch (Exception e) {
             return "CSV read failed";

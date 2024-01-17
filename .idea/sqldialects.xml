@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="SqlDialectMappings">
-    <file url="file://$PROJECT_DIR$/src/main/java/project/server/rmi/database/procedures/employees_staging.sql" dialect="MariaDB" />
-    <file url="file://$PROJECT_DIR$/src/main/java/project/server/rmi/database/procedures/products.sql" dialect="MariaDB" />
-    <file url="file://$PROJECT_DIR$/src/main/java/project/server/rmi/database/procedures/products_staging.sql" dialect="MariaDB" />
-    <file url="file://$PROJECT_DIR$/src/main/java/project/server/rmi/database/procedures/users.sql" dialect="MariaDB" />
-    <file url="file://$PROJECT_DIR$/src/main/java/project/server/rmi/database/procedures/warehouses.sql" dialect="MariaDB" />
+    <file url="file://$PROJECT_DIR$/src/main/java/project/client/user_interface/tabs/database/procedures/employees_staging.sql" dialect="MariaDB" />
+    <file url="file://$PROJECT_DIR$/src/main/java/project/client/user_interface/tabs/database/procedures/products.sql" dialect="MariaDB" />
+    <file url="file://$PROJECT_DIR$/src/main/java/project/client/user_interface/tabs/database/procedures/products_staging.sql" dialect="MariaDB" />
+    <file url="file://$PROJECT_DIR$/src/main/java/project/client/user_interface/tabs/database/procedures/users.sql" dialect="MariaDB" />
+    <file url="file://$PROJECT_DIR$/src/main/java/project/client/user_interface/tabs/database/procedures/warehouses.sql" dialect="MariaDB" />
   </component>
 </project>

@@ -1,6 +1,6 @@
 package project.server.rmi.DataManagement;
 
-import project.server.rmi.database.Connector;
+import project.client.user_interface.tabs.database.Connector;
 
 public class DataProvider {
 

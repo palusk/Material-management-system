@@ -1,4 +1,4 @@
-package project.server.rmi.database;
+package project.client.user_interface.tabs.database;
 
 import java.sql.*;
 import java.util.Arrays;

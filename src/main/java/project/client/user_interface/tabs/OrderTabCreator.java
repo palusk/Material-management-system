@@ -192,6 +192,6 @@ public class OrderTabCreator {
         return resultStringBuilder.toString();
     }
 
-    // --TODO PRZYCISK DO ZATWIERDZANIA ODEBRANIA ZAMÓWIENIA POMIĘDZY MAGAZYNAMI
+
 
 }

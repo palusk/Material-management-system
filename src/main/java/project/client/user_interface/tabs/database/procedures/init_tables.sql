@@ -121,7 +121,7 @@ BEGIN
                                                FOREIGN KEY (profile_id) REFERENCES profiles(profile_id)
     );
 
-    CREATE TABLE staging_orders (
+    CREATE OR REPLACE TABLE staging_orders (
                                     order_id INT,
                                     warehouse_id INT,
                                     ordering_warehouse_id INT,
@@ -130,7 +130,7 @@ BEGIN
                                     PRIMARY KEY (order_id, product_id)
     );
 
-    CREATE TABLE transfers_histo (
+    CREATE OR REPLACE TABLE transfers_histo (
                                     id  INT AUTO_INCREMENT PRIMARY KEY,
                                     warehouse_id INT,
                                     ordering_warehouse_id INT,

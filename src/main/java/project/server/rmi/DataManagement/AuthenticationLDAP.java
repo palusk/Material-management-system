@@ -5,13 +5,15 @@ import javax.naming.Context;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 public class AuthenticationLDAP {
 
     DirContext connection;
 
-    public AuthenticationLDAP(){
+    public AuthenticationLDAP() {
         Properties env = new Properties();
         env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
         env.put(Context.PROVIDER_URL, "ldap://192.168.1.42:10389");
@@ -27,53 +29,37 @@ public class AuthenticationLDAP {
         }
     }
 
-    public void getAllUsers() {
+    public List<String> getAllUsers() {
+        List<String> allUsers = new ArrayList<>();
+
         String searchFilter = "(objectClass=inetOrgPerson)";
-        String[] reqAtt = { "cn", "sn" };
+        String[] reqAtt = {"mail"};
+
         SearchControls controls = new SearchControls();
         controls.setSearchScope(SearchControls.SUBTREE_SCOPE);
         controls.setReturningAttributes(reqAtt);
 
-        NamingEnumeration users = null;
         try {
-            users = connection.search("ou=users,ou=system", searchFilter, controls);
+            NamingEnumeration<SearchResult> users = connection.search("ou=users,ou=system", searchFilter, controls);
+
+            while (users.hasMore()) {
+                SearchResult result = users.next();
+                Attributes attr = result.getAttributes();
+                String mail = (String) attr.get("mail").get();
+                allUsers.add(mail);
+            }
+
         } catch (NamingException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
 
-        SearchResult result = null;
-        while (true) {
-            try {
-                if (!users.hasMore()) break;
-            } catch (NamingException e) {
-                throw new RuntimeException(e);
-            }
-            try {
-                result = (SearchResult) users.next();
-            } catch (NamingException e) {
-                throw new RuntimeException(e);
-            }
-
-            Attributes attr = result.getAttributes();
-            System.out.println(attr.get("cn"));
-            System.out.println(attr.get("sn"));
-            System.out.println("Tutaj powinno być UID: " + attr.get("uid"));
-            System.out.println("Tutaj powinno być hasło: " + attr.get("userPassword"));
-
-            /* PRZYKŁADOWE USUNIĘCIE USERA Z GRUPY */
-//            try {
-//                String name = attr.get("uid").get(0).toString();
-//            } catch (NamingException e) {
-//                throw new RuntimeException(e);
-//            }
-//            deleteUserFromGroup(name,"Administrators");
-        }
+        return allUsers;
     }
 
     public String searchUserID(String cn, String sn) throws NamingException {
         String searchFilter = "(&(cn=" + cn + ")(sn=" + sn + "))"; // warunek and
 //        String searchFilter = "(|(uid=1)(uid=2)(cn=Smith))"; // warunek or
-        String[] reqAtt = { "uid" };
+        String[] reqAtt = {"uid"};
         SearchControls controls = new SearchControls();
         controls.setSearchScope(SearchControls.SUBTREE_SCOPE);
         controls.setReturningAttributes(reqAtt);
@@ -92,8 +78,8 @@ public class AuthenticationLDAP {
     }
 
     public String searchUserName(String uid) throws NamingException {
-        String searchFilter = "(uid=" + uid +")";
-        String[] reqAtt = { "cn", "sn" };
+        String searchFilter = "(uid=" + uid + ")";
+        String[] reqAtt = {"cn", "sn"};
         SearchControls controls = new SearchControls();
         controls.setSearchScope(SearchControls.SUBTREE_SCOPE);
         controls.setReturningAttributes(reqAtt);
@@ -114,8 +100,9 @@ public class AuthenticationLDAP {
 
         boolean success = false;
 
-        String uid = Character.toString(Character.toLowerCase(cn.charAt(0))) + sn;
-        uid = uid.toLowerCase();
+        String uid = mail.replace(".", "");
+        int atIndex = uid.indexOf("@");
+        uid = uid.substring(0, atIndex);
 
         Attributes attributes = new BasicAttributes();
         Attribute attribute = new BasicAttribute("objectClass");
@@ -125,9 +112,9 @@ public class AuthenticationLDAP {
         // podstawowe dane usera
         attributes.put("cn", cn);
         attributes.put("sn", sn);
-        attributes.put("mail", mail);
+        attributes.put("uid", uid);
         try {
-            connection.createSubcontext("uid=" + uid + ",ou=users,ou=system", attributes);
+            connection.createSubcontext("mail=" + mail + ",ou=users,ou=system", attributes);
             System.out.println("New user with uid: " + uid + " has been added to the server!");
             success = true;
         } catch (NamingException e) {
@@ -139,18 +126,18 @@ public class AuthenticationLDAP {
 
     public void addUserToGroup(String username, String groupName) {
         ModificationItem[] mods = new ModificationItem[1];
-        Attribute attribute = new BasicAttribute("uniqueMember","cn="+username+",ou=users,ou=system");
+        Attribute attribute = new BasicAttribute("uniqueMember", "cn=" + username + ",ou=users,ou=system");
         mods[0] = new ModificationItem(DirContext.ADD_ATTRIBUTE, attribute);
         try {
-            connection.modifyAttributes("cn="+groupName+",ou=groups,ou=system", mods);
+            connection.modifyAttributes("cn=" + groupName + ",ou=groups,ou=system", mods);
             System.out.println("User has been added to the group!");
         } catch (NamingException e) {
             e.printStackTrace();
         }
     }
 
-    public void deleteUser(String uid){
-        String user  = null;
+    public void deleteUser(String uid) {
+        String user = null;
         try {
             user = searchUserName(uid);
         } catch (NamingException e) {
@@ -168,10 +155,10 @@ public class AuthenticationLDAP {
 
     public void deleteUserFromGroup(String username, String groupName) {
         ModificationItem[] mods = new ModificationItem[1];
-        Attribute attribute = new BasicAttribute("uniqueMember","cn="+username+",ou=users,ou=system");
+        Attribute attribute = new BasicAttribute("uniqueMember", "cn=" + username + ",ou=users,ou=system");
         mods[0] = new ModificationItem(DirContext.REMOVE_ATTRIBUTE, attribute);
         try {
-            connection.modifyAttributes("cn="+groupName+",ou=groups,ou=system", mods);
+            connection.modifyAttributes("cn=" + groupName + ",ou=groups,ou=system", mods);
             System.out.println("");
         } catch (NamingException e) {
             e.printStackTrace();
@@ -180,59 +167,89 @@ public class AuthenticationLDAP {
 
 
     /* uwierzytelnianie istniejącego usera */
-    public static boolean authUser(String username, String password)
-    {
+    public static boolean authUser(String mail, String password) {
         try {
             Properties env = new Properties();
             env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
             env.put(Context.PROVIDER_URL, "ldap://192.168.1.42:10389");
-            env.put(Context.SECURITY_PRINCIPAL, "uid="+username+",ou=users,ou=system");
+            env.put(Context.SECURITY_PRINCIPAL, "mail=" + mail + ",ou=users,ou=system");
             env.put(Context.SECURITY_CREDENTIALS, password);
             DirContext con = new InitialDirContext(env);
             System.out.println("LDAP authentication succeeded");
             con.close();
             return true;
-        }catch (Exception e) {
-            System.out.println("LDAP authentication failed: "+e.getMessage());
+        } catch (Exception e) {
+            System.out.println("LDAP authentication failed: " + e.getMessage());
             return false;
         }
     }
 
-    /* update hasła usera */
-    public void updateUserPassword(String username, String password) {
+    /* sprawdzanie userów bez hasła */
+    public List<String> getUsersWithoutPassword() {
+        List<String> usersWithoutPassword = new ArrayList<>();
+
+        String searchFilter = "(&(objectClass=inetOrgPerson)(!(userPassword=*)))";
+        String[] reqAtt = {"mail"};
+
+        SearchControls controls = new SearchControls();
+        controls.setSearchScope(SearchControls.SUBTREE_SCOPE);
+        controls.setReturningAttributes(reqAtt);
+
         try {
-            String dnBase=",ou=users,ou=system";
-            ModificationItem[] mods= new ModificationItem[1];
+            NamingEnumeration<SearchResult> users = connection.search("ou=users,ou=system", searchFilter, controls);
+            while (users.hasMore()) {
+                SearchResult result = users.next();
+                Attributes attr = result.getAttributes();
+                String mail = (String) attr.get("mail").get();
+                usersWithoutPassword.add(mail);
+            }
+        } catch (NamingException e) {
+            e.printStackTrace();
+        }
+
+        return usersWithoutPassword;
+    }
+
+    /* update hasła usera */
+    public void updateUserPassword(String mail, String password) {
+        try {
+            String dnBase = ",ou=users,ou=system";
+            ModificationItem[] mods = new ModificationItem[1];
             mods[0] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, new BasicAttribute("userPassword", password));
-            connection.modifyAttributes("uid="+username +dnBase, mods); //dynamiczne tworzenie DN (nazwy wyróżniającej)
-            System.out.println("success");
-        }catch (Exception e) {
-            System.out.println("failed: "+e.getMessage());
+            connection.modifyAttributes("mail=" + mail + dnBase, mods); //dynamiczne tworzenie DN (nazwy wyróżniającej)
+            System.out.println("Password has been changed!");
+        } catch (Exception e) {
+            System.out.println("Change of password has failed: " + e.getMessage());
         }
     }
 
     public void updateUserDetails(String username, String employeeNumber) {
         try {
-            String dnBase=",ou=users,ou=system";
+            String dnBase = ",ou=users,ou=system";
             Attribute attribute = new BasicAttribute("employeeNumber", employeeNumber);
-            ModificationItem[] mods= new ModificationItem[1];
+            ModificationItem[] mods = new ModificationItem[1];
             mods[0] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, attribute);
-            connection.modifyAttributes("cn="+username +dnBase, mods);
+            connection.modifyAttributes("cn=" + username + dnBase, mods);
             System.out.println("success");
-        }catch (Exception e) {
-            System.out.println("failed: "+e.getMessage());
+        } catch (Exception e) {
+            System.out.println("failed: " + e.getMessage());
         }
     }
 
     public static void main(String[] args) {
 
         AuthenticationLDAP testObject = new AuthenticationLDAP();
- //       testObject.updateUserPassword("mziecina", "123");
+//        testObject.updateUserPassword("mziecina", "123");
 //        testObject.addUser();
-        testObject.getAllUsers();
+//        testObject.getAllUsers();
 //        testObject.deleteUser("kpalus");
 
+        List<String> usersWithoutPassword = testObject.getUsersWithoutPassword();
 
+        System.out.println("Users without password:");
+        for (String user : usersWithoutPassword) {
+            System.out.println(user);
 
+        }
     }
 }

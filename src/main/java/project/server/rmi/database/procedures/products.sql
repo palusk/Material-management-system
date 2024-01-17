@@ -112,7 +112,7 @@ CREATE OR REPLACE PROCEDURE transferProduct(
     destination_warehouse_id INT,
     transferred_product_id INT,
     transferred_quantity INT,
-    transferred_expiration_date INT
+    transferred_expiration_date DATE
 )
 BEGIN
     DECLARE available_quantity INT;
@@ -125,6 +125,8 @@ BEGIN
     WHERE warehouse_id = source_warehouse_id
       AND product_id = transferred_product_id
       AND expiration_date = transferred_expiration_date;
+
+    SELECT available_quantity;
 
     -- Check if there is enough quantity to transfer
     IF transferred_quantity <= available_quantity THEN
@@ -143,6 +145,8 @@ BEGIN
                   AND product_id = transferred_product_id
                   AND expiration_date = transferred_expiration_date
             ) THEN
+
+            SELECT 1;
             -- If the product exists, update its quantity
             UPDATE products_in_stock
             SET quantity = quantity + transferred_quantity
@@ -150,6 +154,8 @@ BEGIN
               AND product_id = transferred_product_id
               AND expiration_date = transferred_expiration_date;
         ELSE
+            SELECT (destination_warehouse_id, transferred_product_id, transferred_expiration_date, transferred_quantity);
+            SELECT 2;
             -- If the product does not exist, insert a new record
             INSERT INTO products_in_stock (warehouse_id, product_id, expiration_date, quantity)
             VALUES (destination_warehouse_id, transferred_product_id, transferred_expiration_date, transferred_quantity);

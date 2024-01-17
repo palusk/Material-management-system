@@ -200,6 +200,12 @@ BEGIN
 
         IF v_expiration_date is not null THEN
             CALL transferProduct(v_warehouse_id, v_ordering_warehouse_id, v_product_id, v_order_quantity, v_expiration_date);
+            INSERT INTO transfers_histo (warehouse_id,
+                                         ordering_warehouse_id,
+                                         product_id,
+                                         order_quantity,
+                                         expiration_date)
+            SELECT v_warehouse_id, v_ordering_warehouse_id, v_product_id, v_order_quantity, v_expiration_date;
         END IF;
     END LOOP;
 

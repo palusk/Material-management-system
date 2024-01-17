@@ -130,6 +130,15 @@ BEGIN
                                     PRIMARY KEY (order_id, product_id)
     );
 
+    CREATE TABLE transfers_histo (
+                                    id  INT AUTO_INCREMENT PRIMARY KEY,
+                                    warehouse_id INT,
+                                    ordering_warehouse_id INT,
+                                    product_id INT,
+                                    order_quantity INT,
+                                    expiration_date DATE
+    );
+
 END //
 
 DELIMITER ;

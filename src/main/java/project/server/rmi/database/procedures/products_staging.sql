@@ -1,14 +1,5 @@
 DELIMITER //
 
-CREATE OR REPLACE PROCEDURE DeleteStagingProductInStockByWarehouse(
-    IN p_product_id INT,
-    IN p_warehouse_id INT
-)
-BEGIN
-    DELETE FROM staging_products_in_stock
-    WHERE product_id = p_product_id AND warehouse_id = p_warehouse_id;
-END //
-
 CREATE OR REPLACE PROCEDURE InsertStagingProductInStock(
     IN p_product_id INT,
     IN p_quantity INT,
@@ -30,29 +21,6 @@ BEGIN
                p_expiration_date,
                'Pending'
            );
-END //
-
-CREATE OR REPLACE PROCEDURE DeleteStagingProductInStock(
-    IN p_staging_id INT
-)
-BEGIN
-    DELETE FROM staging_products_in_stock
-    WHERE staging_id = p_staging_id;
-END //
-
-CREATE OR REPLACE PROCEDURE DeleteProcessedStagingRows()
-BEGIN
-    DELETE FROM staging_products_in_stock WHERE load_status = 'Processed';
-END //
-
-CREATE OR REPLACE PROCEDURE DeleteErrorStagingRows()
-BEGIN
-    DELETE FROM staging_products_in_stock WHERE load_status = 'Error';
-END //
-
-CREATE OR REPLACE PROCEDURE DeletePendingStagingRows()
-BEGIN
-    DELETE FROM staging_products_in_stock WHERE load_status = 'Pending';
 END //
 
 CREATE OR REPLACE PROCEDURE DeleteAllProductStagingRows()
@@ -123,7 +91,6 @@ BEGIN
 
     COMMIT;
 END //
-
 
 CREATE OR REPLACE PROCEDURE ProcessPendingRowsInProductStaging()
 BEGIN

@@ -87,6 +87,7 @@ BEGIN
                                                   email VARCHAR(100) NOT NULL,
                                                   position VARCHAR(50),
                                                   warehouse_id INT,
+                                                  reports_to INT,
                                                   load_status ENUM('Pending', 'Processed', 'Error') DEFAULT 'Pending',
                                                   load_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                                                   error_message VARCHAR(255)

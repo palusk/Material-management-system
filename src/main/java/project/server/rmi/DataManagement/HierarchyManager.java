@@ -10,7 +10,7 @@ public class HierarchyManager {
     private static Connector database = new Connector();
     static ExcelImporter importer = new ExcelImporter();
 
-    public static String loadEmployeesFromCSV(String csvFile) throws SQLException {
+    public static String loadEmployeesFromCSV(String csvFile){
         try {
             AuthenticationLDAP objectLDAP = new AuthenticationLDAP();
 
@@ -29,8 +29,13 @@ public class HierarchyManager {
                             String email = columns[2].trim();
 
                             //System.out.println("Firstname: " + firstname + ", Lastname: " + lastname + ", Email: " + email);
-                            if(objectLDAP.addUser(firstname, lastname, email)){
-                                checkIfUserAddedToLDAP = true;
+                            try {
+                                if (objectLDAP.addUser(firstname, lastname, email)) {
+                                    checkIfUserAddedToLDAP = true;
+                                }
+                            }catch (Exception e) {
+                                    System.out.println(e.getMessage());
+                                    checkIfUserAddedToLDAP = false;
                             }
 
                         } else {
@@ -57,7 +62,7 @@ public class HierarchyManager {
 
 
     private static String insertDataIntoStaging(List<String> inputString) {
-        return new Connector().insertDataIntoStaging(inputString,"InsertStagingEmployees",5);
+        return new Connector().insertDataIntoStaging(inputString,"InsertStagingEmployees",6);
     }
 
     public static String triggerValidation() {
@@ -100,14 +105,15 @@ public class HierarchyManager {
     public static void compareLdapAndDatabase(AuthenticationLDAP ldap){
         List<String> ldapEmployees = ldap.getAllUsers();
         List<String> databaseEmployees = getAllEmployeesList();
-
+        boolean check = false;
         for (String element : ldapEmployees) {
             if (databaseEmployees.contains(element)) {
-                System.out.println("New users have been added to the LDAP server successful!");
+                check = true;
             }else {
                 ldap.deleteUser(element);
             }
         }
+        if(check) {System.out.println("New users have been added to the LDAP server successful!");}
     }
 
 

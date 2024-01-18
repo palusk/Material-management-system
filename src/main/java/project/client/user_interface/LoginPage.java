@@ -20,7 +20,10 @@ class LoginPage {
     private BorderPane pane;
     private TextField usernameInput;
     private PasswordField passwordInput;
-
+    private Label text;
+    private Button registerButton;
+    private String registerMessage = "New user, please press register button again to set you password";
+    private String registerErrorMessage = "Password has not been set up correctly. Please try again or contact with admin!";
     public LoginPage(WindowManager windowManager) {
         this.windowManager = windowManager;
         initialize();
@@ -28,7 +31,7 @@ class LoginPage {
 
     private void initialize() {
         pane = new BorderPane();
-
+        text = new Label("Provide your credentials");
         GridPane grid = new GridPane();
         grid.setPadding(new Insets(10, 10, 10, 10));
         grid.setVgap(8);
@@ -58,7 +61,33 @@ class LoginPage {
             }
         });
 
-        grid.getChildren().addAll(usernameLabel, usernameInput, passwordLabel, passwordInput, loginButton);
+        registerButton = new Button("Register");
+        registerButton.setDisable(true);
+        GridPane.setConstraints(text, 0, 4);
+        GridPane.setConstraints(registerButton, 0, 3);
+        registerButton.setOnAction(e -> {
+            try {
+                RemoteManager remoteManager = new RemoteManagerImpl();
+                AuthenticationLDAPRemote ldapConnect = remoteManager.getAuthenticationLDAP();
+                if(ldapConnect.updateUserPassword(usernameInput.getText(), passwordInput.getText())){
+                    try {
+                        text.setText("Provide your credentials");
+                        registerButton.setDisable(true);
+                        openMainPanel();
+                    } catch (Exception ex) {
+                        text.setText("User app error");
+                        throw new RuntimeException(ex);
+                    }
+                } else{
+                    text.setText(registerErrorMessage);
+                    System.out.println(registerErrorMessage);
+                }
+            } catch (Exception ee) {
+                System.out.println(ee.getMessage());
+            }
+        });
+
+        grid.getChildren().addAll(usernameLabel, usernameInput, passwordLabel, passwordInput, loginButton,registerButton, text);
         pane.setCenter(grid);
     }
 
@@ -72,7 +101,11 @@ class LoginPage {
                 throw new RuntimeException(ex);
             }
         } else {
-            System.out.println("Login failed. Please check your credentials.");
+            registerButton.setDisable(true);
+            if( text.getText().equals(registerMessage)){
+                registerButton.setDisable(false);
+            }
+            System.out.println(registerMessage);
         }
     }
 
@@ -90,8 +123,25 @@ class LoginPage {
         } else {
             RemoteManager remoteManager = new RemoteManagerImpl();
             AuthenticationLDAPRemote ldapConnect = remoteManager.getAuthenticationLDAP();
-            System.out.println(ldapConnect.authUser(username, password));
-            return ldapConnect.authUser(username, password);
+            String authenticationOutput = ldapConnect.authUser(username, password);
+            switch (authenticationOutput){
+                case "Authorized":
+                    System.out.println("logged in");
+                    return true;
+                case "Unregistered":
+                    text.setText(registerMessage);
+                    System.out.println("not registered");
+                    return false;
+                case "NonAuthorized":
+                    text.setText("Wrong credentials");
+                    System.out.println("wrong credentials");
+                    return false;
+                default:
+                    System.out.println(authenticationOutput);
+                    text.setText("Server error");
+                    System.out.println("error");
+                    return false;
+            }
         }
     }
 

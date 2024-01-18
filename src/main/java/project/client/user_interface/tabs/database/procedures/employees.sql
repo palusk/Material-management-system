@@ -69,4 +69,10 @@ BEGIN
     FROM employee_hierarchy;
 END //
 
+CREATE OR REPLACE PROCEDURE getAllEmployees()
+BEGIN
+    SELECT email
+    FROM employees;
+END //
+
 DELIMITER ;

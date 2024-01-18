@@ -15,8 +15,14 @@ public class AuthenticationLDAPImpl extends UnicastRemoteObject implements Authe
         }
 
         @Override
-        public boolean authUser(String username, String password) throws RemoteException{
+        public String authUser(String username, String password) throws RemoteException{
             return authLDAP.authUser(username, password);
+        }
+
+
+        @Override
+        public boolean updateUserPassword(String mail, String password) throws RemoteException{
+            return authLDAP.updateUserPassword(mail, password);
         }
 
 

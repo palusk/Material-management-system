@@ -11,4 +11,5 @@ public interface HierarchyManagerRemote extends Remote {
     String clearStaging() throws RemoteException;
     String getStagingErrors() throws RemoteException;
     String getHierarchy() throws RemoteException;
+    String getAllEmployees() throws RemoteException;
 }

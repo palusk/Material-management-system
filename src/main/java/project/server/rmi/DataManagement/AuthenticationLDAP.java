@@ -77,8 +77,8 @@ public class AuthenticationLDAP {
         return uidFound;
     }
 
-    public String searchUserName(String uid) throws NamingException {
-        String searchFilter = "(uid=" + uid + ")";
+    public String searchUserName(String mail) throws NamingException {
+        String searchFilter = "(mail=" + mail + ")";
         String[] reqAtt = {"cn", "sn"};
         SearchControls controls = new SearchControls();
         controls.setSearchScope(SearchControls.SUBTREE_SCOPE);
@@ -115,7 +115,6 @@ public class AuthenticationLDAP {
         attributes.put("uid", uid);
         try {
             connection.createSubcontext("mail=" + mail + ",ou=users,ou=system", attributes);
-            System.out.println("New user with uid: " + uid + " has been added to the server!");
             success = true;
         } catch (NamingException e) {
             e.printStackTrace();
@@ -136,17 +135,16 @@ public class AuthenticationLDAP {
         }
     }
 
-    public void deleteUser(String uid) {
+    public void deleteUser(String mail) {
         String user = null;
         try {
-            user = searchUserName(uid);
+            user = searchUserName(mail);
         } catch (NamingException e) {
             throw new RuntimeException(e);
         }
 
         try {
-            connection.destroySubcontext("uid=" + uid + ",ou=users,ou=system");
-            System.out.println("User " + user + " has been deleted!");
+            connection.destroySubcontext("mail=" + mail + ",ou=users,ou=system");
         } catch (NamingException e) {
             e.printStackTrace();
             System.out.println("Check if provided user exist!");
@@ -167,21 +165,26 @@ public class AuthenticationLDAP {
 
 
     /* uwierzytelnianie istniejącego usera */
-    public static boolean authUser(String mail, String password) {
-        try {
-            Properties env = new Properties();
-            env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-            env.put(Context.PROVIDER_URL, "ldap://192.168.1.42:10389");
-            env.put(Context.SECURITY_PRINCIPAL, "mail=" + mail + ",ou=users,ou=system");
-            env.put(Context.SECURITY_CREDENTIALS, password);
-            DirContext con = new InitialDirContext(env);
-            System.out.println("LDAP authentication succeeded");
-            con.close();
-            return true;
-        } catch (Exception e) {
-            System.out.println("LDAP authentication failed: " + e.getMessage());
-            return false;
-        }
+    public String authUser(String mail, String password) {
+        if(isPasswordSet(mail)) {
+            try {
+                Properties env = new Properties();
+                env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
+                env.put(Context.PROVIDER_URL, "ldap://192.168.1.42:10389");
+                env.put(Context.SECURITY_PRINCIPAL, "mail=" + mail + ",ou=users,ou=system");
+                env.put(Context.SECURITY_CREDENTIALS, password);
+                DirContext con = new InitialDirContext(env);
+                System.out.println("LDAP authentication succeeded");
+                con.close();
+                return "Authorized";
+            } catch (NamingException e) {
+                System.out.println("LDAP authentication failed: " + e.getMessage());
+                return "NonAuthorized";
+            } catch (Exception e){
+                String exception = e.getMessage();
+                return exception;
+            }
+        }else {return "Unregistered";}
     }
 
     /* sprawdzanie userów bez hasła */
@@ -210,16 +213,27 @@ public class AuthenticationLDAP {
         return usersWithoutPassword;
     }
 
+
+    public boolean isPasswordSet(String mail){
+         List<String> list = getUsersWithoutPassword();
+             if(list.contains(mail)){
+                 return false;
+             }
+         return true;
+    }
+
     /* update hasła usera */
-    public void updateUserPassword(String mail, String password) {
+    public boolean updateUserPassword(String mail, String password) {
         try {
             String dnBase = ",ou=users,ou=system";
             ModificationItem[] mods = new ModificationItem[1];
             mods[0] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, new BasicAttribute("userPassword", password));
             connection.modifyAttributes("mail=" + mail + dnBase, mods); //dynamiczne tworzenie DN (nazwy wyróżniającej)
             System.out.println("Password has been changed!");
+            return true;
         } catch (Exception e) {
             System.out.println("Change of password has failed: " + e.getMessage());
+            return false;
         }
     }
 
@@ -251,5 +265,12 @@ public class AuthenticationLDAP {
             System.out.println(user);
 
         }
+
+//        List<String> allUsers = testObject.getAllUsers();
+//
+//        for (String user : allUsers) {
+//            System.out.println(user);
+//        }
+
     }
 }

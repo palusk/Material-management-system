@@ -46,4 +46,9 @@ public class HierarchyManagerImpl extends UnicastRemoteObject implements Hierarc
         return hierarchyManager.getHierarchy();
     }
 
+    @Override
+    public String getAllEmployees() throws RemoteException {
+        return hierarchyManager.getAllEmployees();
+    }
+
 }

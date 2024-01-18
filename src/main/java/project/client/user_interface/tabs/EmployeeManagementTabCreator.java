@@ -46,16 +46,16 @@ public class EmployeeManagementTabCreator {
         VBox employeeButtonsVBox = new VBox(
                 tableView,
                 resultLabel,
+                createButton("Generate Employee Excel", this::handleGenerateEmployeeExcel),
                 createButton("Select Employee CSV File", this::handleSelectEmployeeFile),
                 createButton("Load Employee Data", this::handleLoadEmployeeData),
-                createButton("Refresh Hierarchy", this::handleRefreshHierarchy),
                 createButton("Show Employees Staging Table", this::handleShowEmployeeStagingTable),
-                createButton("Clear Employees Staging Table", this::handleClearEmployeeStagingTable),
                 createButton("Show Employees Staging Errors", this::handleShowEmployeeStagingErrors),
+                createButton("Clear Employees Staging Table", this::handleClearEmployeeStagingTable),
+                createButton("Refresh Hierarchy", this::handleRefreshHierarchy),
                 createButton("Show Hierarchy", this::handleShowHierarchy),
                 createButton("Refresh Profiles", this::handleRefreshProfiles),
-                createButton("Show Users Profiles", this::handleShowUserProfiles),
-                createButton("Generate Employee Excel", this::handleGenerateEmployeeExcel)
+                createButton("Show Users Profiles", this::handleShowUserProfiles)
         );
         employeeTab.setContent(employeeButtonsVBox);
         return employeeTab;

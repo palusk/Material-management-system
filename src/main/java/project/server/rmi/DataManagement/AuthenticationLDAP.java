@@ -96,7 +96,29 @@ public class AuthenticationLDAP {
         return nameSurname;
     }
 
-    public boolean addUser(String cn, String sn, String mail) {
+    public String getUserEmployeeType(String mail) {
+        String employeeType = new String();
+
+        String searchFilter = "(&(objectClass=inetOrgPerson)((mail=" + mail + ")))";
+        String[] reqAtt = {"employeeType"};
+
+        SearchControls controls = new SearchControls();
+        controls.setSearchScope(SearchControls.SUBTREE_SCOPE);
+        controls.setReturningAttributes(reqAtt);
+
+        try {
+            NamingEnumeration<SearchResult> users = connection.search("ou=users,ou=system", searchFilter, controls);
+                SearchResult result = users.next();
+                Attributes attr = result.getAttributes();
+                employeeType = (String) attr.get("employeeType").get();
+        } catch (NamingException e) {
+            e.printStackTrace();
+        }
+        return employeeType;
+    }
+
+    // --TODO SPRAWDZIĆ CZY MOŻNA WYCIĄGNĄĆ PARAMETR DO ROZPOZNANIA DANEGO UŻYTKOWNIKA (W CELU UZYSKANIA LUB OGRANICZENIA WYBRANYCH OPCJI SYSTEMU)
+    public boolean addUser(String cn, String sn, String mail, String employeeType) {
 
         boolean success = false;
 
@@ -113,6 +135,7 @@ public class AuthenticationLDAP {
         attributes.put("cn", cn);
         attributes.put("sn", sn);
         attributes.put("uid", uid);
+        attributes.put("employeeType", employeeType);
         try {
             connection.createSubcontext("mail=" + mail + ",ou=users,ou=system", attributes);
             success = true;
@@ -163,8 +186,6 @@ public class AuthenticationLDAP {
         }
     }
 
-
-    /* uwierzytelnianie istniejącego usera */
     public String authUser(String mail, String password) {
         if(isPasswordSet(mail)) {
             try {

@@ -18,7 +18,7 @@ public class MainApplication extends Application {
         LoginPage loginPage = new LoginPage(windowManager);
         windowManager.setLoginPage(loginPage);
 
-        primaryStage.setTitle("JavaFX Application");
+        primaryStage.setTitle("Material management system");
         primaryStage.setScene(windowManager.getScene());
         primaryStage.show();
     }

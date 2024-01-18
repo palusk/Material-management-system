@@ -2,7 +2,6 @@ package project.server.rmi.DataManagement;
 
 import project.client.user_interface.tabs.database.Connector;
 
-import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -23,14 +22,15 @@ public class HierarchyManager {
                     for (String line : dataList) {
                         String[] columns = line.split(";");
 
-                        if (columns.length >= 3) {
+                        if (columns.length >= 4) {
                             String firstname = columns[0].trim();
                             String lastname = columns[1].trim();
                             String email = columns[2].trim();
+                            String employeeType = columns[3].trim();
 
                             //System.out.println("Firstname: " + firstname + ", Lastname: " + lastname + ", Email: " + email);
                             try {
-                                if (objectLDAP.addUser(firstname, lastname, email)) {
+                                if (objectLDAP.addUser(firstname, lastname, email, employeeType)) {
                                     checkIfUserAddedToLDAP = true;
                                 }
                             }catch (Exception e) {

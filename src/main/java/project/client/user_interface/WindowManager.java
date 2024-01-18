@@ -24,9 +24,9 @@ public class WindowManager {
         this.loginPage = loginPage;
     }
 
-    public void showMenuPage() {
+    public void showMenuPage(boolean highPermission) {
         if (menuPage == null) {
-            menuPage = new MenuPage(this);
+            menuPage = new MenuPage(this, highPermission);
         }
         primaryStage.setScene(menuPage.getScene());
     }

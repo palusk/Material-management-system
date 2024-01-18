@@ -3,6 +3,8 @@ package project.client.user_interface;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
+import project.server.rmi.DataManagement.AuthenticationLDAP;
+
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
@@ -11,12 +13,12 @@ public class MenuPage {
     private WindowManager windowManager;
     private BorderPane pane;
 
-    public MenuPage(WindowManager windowManager) {
+    public MenuPage(WindowManager windowManager, boolean highPermission) {
         this.windowManager = windowManager;
-        initialize();
+        initialize(highPermission);
     }
 
-    private void initialize() {
+    private void initialize(boolean highPermission) {
         pane = new BorderPane();
 
         Button userPageButton = new Button("Go to User Page");
@@ -24,18 +26,22 @@ public class MenuPage {
         BorderPane.setAlignment(userPageButton, javafx.geometry.Pos.CENTER);
         pane.setTop(userPageButton);
 
-        Button adminPageButton = new Button("Go to Admin Page");
-        adminPageButton.setOnAction(e -> {
-            try {
-                windowManager.showAdminPage();
-            } catch (NotBoundException ex) {
-                throw new RuntimeException(ex);
-            } catch (RemoteException ex) {
-                throw new RuntimeException(ex);
-            }
-        });
-        BorderPane.setAlignment(adminPageButton, javafx.geometry.Pos.CENTER);
-        pane.setCenter(adminPageButton);
+        // --TODO SPRAWDZIĆ CZY MOŻNA WYCIĄGNĄĆ PARAMETR DO ROZPOZNANIA DANEGO UŻYTKOWNIKA (W CELU UZYSKANIA LUB OGRANICZENIA WYBRANYCH OPCJI SYSTEMU)
+
+        if(highPermission) {
+            Button adminPageButton = new Button("Go to Admin Page");
+            adminPageButton.setOnAction(e -> {
+                try {
+                    windowManager.showAdminPage();
+                } catch (NotBoundException ex) {
+                    throw new RuntimeException(ex);
+                } catch (RemoteException ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
+            BorderPane.setAlignment(adminPageButton, javafx.geometry.Pos.CENTER);
+            pane.setCenter(adminPageButton);
+        }
 
         Button loginPageButton = new Button("Logout");
         loginPageButton.setOnAction(e -> handleLogoutButton());

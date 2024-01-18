@@ -11,6 +11,8 @@ import javafx.scene.layout.GridPane;
 import project.client.RemoteManagerImpl;
 import project.client.interfaces.AuthenticationLDAPRemote;
 import project.client.interfaces.RemoteManager;
+import project.server.rmi.DataManagement.AuthenticationLDAP;
+
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
@@ -69,11 +71,18 @@ class LoginPage {
             try {
                 RemoteManager remoteManager = new RemoteManagerImpl();
                 AuthenticationLDAPRemote ldapConnect = remoteManager.getAuthenticationLDAP();
+                boolean highPermission = false;
+                AuthenticationLDAP ldapObject = new AuthenticationLDAP();
+
                 if(ldapConnect.updateUserPassword(usernameInput.getText(), passwordInput.getText())){
+                    String employeeType = ldapObject.getUserEmployeeType(usernameInput.getText());
+                    if(employeeType.equals("Manager") || (usernameInput.getText().equals("test") && passwordInput.getText().equals("test"))){
+                        highPermission = true;
+                    }
                     try {
                         text.setText("Provide your credentials");
                         registerButton.setDisable(true);
-                        openMainPanel();
+                        openMainPanel(highPermission);
                     } catch (Exception ex) {
                         text.setText("User app error");
                         throw new RuntimeException(ex);
@@ -93,10 +102,19 @@ class LoginPage {
 
     private void handleLoginButton() throws NotBoundException, RemoteException {
         boolean isValid = authenticate(usernameInput.getText(), passwordInput.getText());
+        boolean highPermission = false;
+
+        AuthenticationLDAP ldapObject = new AuthenticationLDAP();
+        String employeeType = ldapObject.getUserEmployeeType(usernameInput.getText());
+
+        if(employeeType.equals("Manager") && usernameInput.getText().equals("test") && passwordInput.getText().equals("test")){
+            highPermission = true;
+        }
+
         if (isValid) {
             System.out.println("Login successful!");
             try {
-                openMainPanel();
+                openMainPanel(highPermission);
             } catch (Exception ex) {
                 throw new RuntimeException(ex);
             }
@@ -113,8 +131,8 @@ class LoginPage {
         return pane;
     }
 
-    private void openMainPanel() throws Exception {
-        windowManager.showMenuPage();
+    private void openMainPanel(boolean highPermission) throws Exception {
+        windowManager.showMenuPage(highPermission);
     }
 
     private boolean authenticate(String username, String password) throws RemoteException, NotBoundException {

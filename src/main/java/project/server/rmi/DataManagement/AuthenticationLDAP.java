@@ -139,6 +139,7 @@ public class AuthenticationLDAP {
         try {
             connection.createSubcontext("mail=" + mail + ",ou=users,ou=system", attributes);
             success = true;
+            System.out.println("New users have been added to the LDAP server successful!");
         } catch (NamingException e) {
             e.printStackTrace();
             System.out.println("Creation of new user failed!");

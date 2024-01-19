@@ -36,8 +36,8 @@ END //
 
 CREATE OR REPLACE PROCEDURE getProfiles()
 BEGIN
-    SELECT *
-    FROM users_profiles;
+    SELECT up.profile_id, p.profile_name, up.employee_id
+    FROM users_profiles up JOIN profiles p on p.profile_id = up.profile_id;
 END //
 
 CREATE OR REPLACE PROCEDURE getUserWarehouse(

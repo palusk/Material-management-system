@@ -23,6 +23,10 @@ public class ProfilesManager {
                 sn = fields[1];
                 mail = fields[2];
                 employeeType = fields[3];
+            System.out.println(cn);
+            System.out.println(sn);
+            System.out.println(mail);
+            System.out.println(employeeType);
                 ldap.addUser(cn,sn,mail,employeeType);
             }
 
@@ -64,6 +68,6 @@ public class ProfilesManager {
     }
 
     public static String getDataForLDAP(){
-        return new Connector().callStoredProcedure("getDataForLDAP", null, true);
+        return new Connector().callStoredProcedure("getDataForLDAP", null, true, false);
     }
 }

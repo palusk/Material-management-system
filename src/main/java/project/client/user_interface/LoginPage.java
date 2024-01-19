@@ -76,7 +76,7 @@ class LoginPage {
 
                 if(ldapConnect.updateUserPassword(usernameInput.getText(), passwordInput.getText())){
                     String employeeType = ldapObject.getUserEmployeeType(usernameInput.getText());
-                    if(employeeType.equals("Manager") || (usernameInput.getText().equals("test") && passwordInput.getText().equals("test"))){
+                    if(employeeType.equals("0") || (usernameInput.getText().equals("test") && passwordInput.getText().equals("test"))){
                         highPermission = true;
                     }
                     try {
@@ -107,7 +107,7 @@ class LoginPage {
         AuthenticationLDAP ldapObject = new AuthenticationLDAP();
         String employeeType = ldapObject.getUserEmployeeType(usernameInput.getText());
 
-        if(employeeType.equals("Manager") || (usernameInput.getText().equals("test") && passwordInput.getText().equals("test"))){
+        if(employeeType.equals("0") || (usernameInput.getText().equals("test") && passwordInput.getText().equals("test"))){
             highPermission = true;
         }
 

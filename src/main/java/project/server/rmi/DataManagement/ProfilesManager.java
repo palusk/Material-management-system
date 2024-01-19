@@ -9,10 +9,10 @@ public class ProfilesManager {
 
     public static String updateProfiles() {
         String output;
+        output = new Connector().callStoredProcedure("updateProfiles", null, false);
         String dataForLDAP = getDataForLDAP();
         System.out.println(dataForLDAP);
         AuthenticationLDAP ldap = new AuthenticationLDAP();
-        output = new Connector().callStoredProcedure("updateProfiles", null, false);
         String[] rows = dataForLDAP.split("\n");
         String cn, sn, mail, employeeType;
         // Iterujemy po każdym wierszu

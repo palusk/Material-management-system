@@ -117,7 +117,6 @@ public class AuthenticationLDAP {
         return employeeType;
     }
 
-    // --TODO SPRAWDZIĆ CZY MOŻNA WYCIĄGNĄĆ PARAMETR DO ROZPOZNANIA DANEGO UŻYTKOWNIKA (W CELU UZYSKANIA LUB OGRANICZENIA WYBRANYCH OPCJI SYSTEMU)
     public boolean addUser(String cn, String sn, String mail, String employeeType) {
 
         boolean success = false;

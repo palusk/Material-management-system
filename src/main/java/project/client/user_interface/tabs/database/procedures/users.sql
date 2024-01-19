@@ -40,11 +40,12 @@ BEGIN
     FROM users_profiles up JOIN profiles p on p.profile_id = up.profile_id JOIN employees e on up.employee_id = e.employee_id;
 END //
 
+
 CREATE OR REPLACE PROCEDURE getUserWarehouse(
     IN p_user_id INT
 )
 BEGIN
-    SELECT w.warehouse_name
+    SELECT CONCAT(w.warehouse_id,' ',w.warehouse_name)
     FROM users u
              JOIN employees e ON u.employee_id = e.employee_id
              JOIN warehouses w ON w.warehouse_id = e.warehouse_id
@@ -59,5 +60,6 @@ BEGIN
     FROM users u
     WHERE u.email = p_mail;
 END //
+
 
 DELIMITER ;

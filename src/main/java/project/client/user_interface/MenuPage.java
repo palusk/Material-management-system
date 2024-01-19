@@ -26,7 +26,7 @@ public class MenuPage {
         BorderPane.setAlignment(userPageButton, javafx.geometry.Pos.CENTER);
         pane.setTop(userPageButton);
 
-        // --TODO SPRAWDZIĆ CZY MOŻNA WYCIĄGNĄĆ PARAMETR DO ROZPOZNANIA DANEGO UŻYTKOWNIKA (W CELU UZYSKANIA LUB OGRANICZENIA WYBRANYCH OPCJI SYSTEMU)
+        // --TODO SPRAWDZIĆ CZY MOŻNA WYCIĄGNĄĆ PARAMETR DO ROZPOZNANIA POZIOMU DANEGO UŻYTKOWNIKA (W CELU UZYSKANIA LUB OGRANICZENIA WYBRANYCH OPCJI SYSTEMU)
 
         if(highPermission) {
             Button adminPageButton = new Button("Go to Admin Page");

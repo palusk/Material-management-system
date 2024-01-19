@@ -9,52 +9,18 @@ public class HierarchyManager {
     private static Connector database = new Connector();
     static ExcelImporter importer = new ExcelImporter();
 
-    public static String loadEmployeesFromCSV(String csvFile){
+    public static String loadEmployeesFromCSV(String csvFile) {
         try {
-            AuthenticationLDAP objectLDAP = new AuthenticationLDAP();
-
-            boolean checkIfUserAddedToLDAP = false;
-
             List<String> dataList = importer.csvReader(csvFile);
             String error = HierarchyManager.insertDataIntoStaging(dataList);
-
             if (error.isEmpty()) {
-                    for (String line : dataList) {
-                        String[] columns = line.split(";");
-
-                        if (columns.length >= 4) {
-                            String firstname = columns[0].trim();
-                            String lastname = columns[1].trim();
-                            String email = columns[2].trim();
-                            String employeeType = columns[3].trim();
-
-                            //System.out.println("Firstname: " + firstname + ", Lastname: " + lastname + ", Email: " + email);
-                            try {
-                                if (objectLDAP.addUser(firstname, lastname, email, employeeType)) {
-                                    checkIfUserAddedToLDAP = true;
-                                }
-                            }catch (Exception e) {
-                                    System.out.println(e.getMessage());
-                                    checkIfUserAddedToLDAP = false;
-                            }
-
-                        } else {
-                            // Error jeśli linia nie ma wystarczającej liczby kolumn
-                            System.err.println("Invalid CSV line: " + line);
-                            checkIfUserAddedToLDAP = false;
-                        }
-                    }
-                    if(checkIfUserAddedToLDAP){
-                        error = HierarchyManager.triggerValidation();
-                        System.out.println("Validation of new users have been run.");
-                        compareLdapAndDatabase(objectLDAP);
-                    }else System.err.println("Adding users to LDAP server has failed, validation has not been triggered.");
+                error = HierarchyManager.triggerValidation();
             } else {
                 error = "Load for following rows failed: " + error;
             }
-
             return error;
         } catch (Exception e) {
+            // Log the exception using a logging framework
             return "CSV read failed";
         }
     }

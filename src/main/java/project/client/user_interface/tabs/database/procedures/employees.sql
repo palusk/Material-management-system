@@ -75,4 +75,10 @@ BEGIN
     FROM employees;
 END //
 
+CREATE OR REPLACE PROCEDURE getDataForLDAP()
+BEGIN
+    SELECT first_name, last_name, email, profile_id
+    FROM employees e join users_profiles up on e.employee_id = up.employee_id;
+END //
+
 DELIMITER ;

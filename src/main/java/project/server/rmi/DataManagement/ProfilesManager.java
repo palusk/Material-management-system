@@ -7,7 +7,11 @@ import java.util.List;
 public class ProfilesManager {
 
     public static String updateProfiles() {
-        return new Connector().callStoredProcedure("updateProfiles", null, false);
+        String output;
+        String data = getDataForLDAP();
+        System.out.println(data);
+        output = new Connector().callStoredProcedure("updateProfiles", null, false);
+        return output;
     }
 
     public String getProfiles() {
@@ -42,5 +46,9 @@ public class ProfilesManager {
                 System.out.println(warehouseList);
                 return warehouseList;
             }
+    }
+
+    public static String getDataForLDAP(){
+        return new Connector().callStoredProcedure("getDataForLDAP", null, true);
     }
 }

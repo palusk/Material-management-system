@@ -7,6 +7,7 @@ import javafx.stage.FileChooser;
 import project.client.RemoteManagerImpl;
 import project.client.user_interface.tabs.EmployeeManagementTabCreator;
 import project.client.user_interface.tabs.ProductManagementTabCreator;
+import project.client.user_interface.tabs.ProductsEditorTabCreator;
 import project.client.user_interface.tabs.ProfileTabCreator;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -17,6 +18,7 @@ public class AdminPage {
     private EmployeeManagementTabCreator employeeManagementTabCreator;
     private ProductManagementTabCreator productManagementTabCreator;
     private ProfileTabCreator profileTabCreator;
+    private ProductsEditorTabCreator productsEditorTabCreator;
 
     public AdminPage(WindowManager windowManager) throws RemoteException, NotBoundException {
         this.windowManager = windowManager;
@@ -27,6 +29,7 @@ public class AdminPage {
                 new FileChooser(), windowManager, new RemoteManagerImpl(), new RemoteManagerImpl().getHierarchyManager(), new RemoteManagerImpl().getProfilesManager());
         this.productManagementTabCreator = new ProductManagementTabCreator(
                 new FileChooser(), windowManager, new RemoteManagerImpl(), new RemoteManagerImpl().getProductsLoader());
+        this.productsEditorTabCreator = new ProductsEditorTabCreator();
     }
 
     private BorderPane createAdminPane() {
@@ -39,7 +42,8 @@ public class AdminPage {
         tabPane.getTabs().addAll(
                 employeeManagementTabCreator.create(),
                 productManagementTabCreator.create(),
-                profileTabCreator.create(windowManager)
+                profileTabCreator.create(windowManager),
+                productsEditorTabCreator.create()
         );
         return tabPane;
     }

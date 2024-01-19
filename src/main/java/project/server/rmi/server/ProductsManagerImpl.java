@@ -53,5 +53,10 @@ public class ProductsManagerImpl extends UnicastRemoteObject implements Products
         return productsManager.getAllWarehouses();
     }
 
+    @Override
+    public List<String> getAllWarehousesWithIgnore(String ignoreString, int employeeType) throws RemoteException {
+        return productsManager.getAllWarehousesWithIgnore(ignoreString,employeeType);
+    }
+
 
 }

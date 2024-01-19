@@ -34,11 +34,30 @@ public class ProductsManager {
         return new Connector().callStoredProcedure("getAllWarehouses", null, true,false);
     }
 
+    public static String getAllWarehousesStringWithIgnore(String ignoreString) {
+        return new Connector().callStoredProcedure("GetAllWarehousesWithIgnore",  new Object[]{ignoreString}, true,false);
+    }
+
+
     public List<String> getAllWarehouses(){
             String warehouseString = getAllWarehousesString();
             List<String> warehouseList = Arrays.asList(warehouseString.split("\n"));
             System.out.println(warehouseList);
             return warehouseList;
+    }
+
+    public List<String> getAllWarehousesWithIgnore(String loginUser, int employeeType){
+        if(employeeType == 0) {
+            String warehouseString = getAllWarehousesString();
+            List<String> warehouseList = Arrays.asList(warehouseString.split("\n"));
+            System.out.println(warehouseList);
+            return warehouseList;
+        }else{
+            String warehouseString = getAllWarehousesStringWithIgnore(loginUser);
+            List<String> warehouseList = Arrays.asList(warehouseString.split("\n"));
+            System.out.println(warehouseList);
+            return warehouseList;
+        }
     }
 
 }

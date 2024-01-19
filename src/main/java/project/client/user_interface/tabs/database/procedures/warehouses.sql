@@ -6,6 +6,16 @@ BEGIN
     FROM warehouses;
 END //
 
+CREATE OR REPLACE PROCEDURE GetAllWarehousesWithIgnore(
+    IN p_login_user Varchar(50)
+)
+BEGIN
+    SELECT CONCAT(warehouse_id,' ',warehouse_name)
+    FROM warehouses
+    WHERE warehouse_id NOT IN(
+        SELECT warehouse_id FROM employees e WHERE email = p_login_user);
+END //
+
 CREATE OR REPLACE PROCEDURE GetProductInfoInWarehouse(
     IN p_warehouse_id INT
 )

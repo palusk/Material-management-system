@@ -51,14 +51,13 @@ BEGIN
     WHERE u.user_id = p_user_id;
 END //
 
-CREATE OR REPLACE PROCEDURE getUserProfile(
-    IN p_user_id INT
+CREATE OR REPLACE PROCEDURE getUserID(
+    IN p_mail INT
 )
 BEGIN
-    SELECT profile_id
-    FROM users_profiles
-        JOIN users u on users_profiles.employee_id = u.employee_id
-    WHERE u.user_id = p_user_id;
+    SELECT user_id
+    FROM users u
+    WHERE u.email = p_mail;
 END //
 
 DELIMITER ;

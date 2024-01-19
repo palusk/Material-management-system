@@ -1,5 +1,6 @@
 package project.server.rmi.DataManagement;
 
+import project.client.UserSession;
 import project.client.user_interface.tabs.database.Connector;
 import java.util.Arrays;
 import java.util.List;
@@ -49,10 +50,9 @@ public class ProfilesManager {
         return new Connector().callStoredProcedure("getAllWarehouses", null, true, false);
     }
 
-    public List<String> getWarehouseDropdown(int userID){
-
-        int profileID = Integer.parseInt(getUserProfile(userID));
-        System.out.println(getUserProfile(userID));
+    public List<String> getWarehouseDropdown(int profileID){
+        int userID = Integer.parseInt(getUserID(UserSession.userLogin));
+        System.out.println(userID);
         System.out.println(profileID);
             if(profileID == 0){
                 String warehouseString = getAllWarehouses();
@@ -69,5 +69,9 @@ public class ProfilesManager {
 
     public static String getDataForLDAP(){
         return new Connector().callStoredProcedure("getDataForLDAP", null, true, false);
+    }
+
+    public String getUserID(String userLogin) {
+        return new Connector().callStoredProcedure("getUserID", new Object[]{userLogin}, true, false);
     }
 }

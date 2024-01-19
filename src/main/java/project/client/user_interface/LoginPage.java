@@ -80,7 +80,7 @@ class LoginPage {
                     String employeeType = ldapObject.getUserEmployeeType(usernameInput.getText());
                     if(employeeType.equals("0") || (usernameInput.getText().equals("test") && passwordInput.getText().equals("test"))){
                         highPermission = true;
-                    }
+                    }else highPermission = false;
                     try {
                         text.setText("Provide your credentials");
                         registerButton.setDisable(true);
@@ -111,7 +111,7 @@ class LoginPage {
 
         if(employeeType.equals("0") || (usernameInput.getText().equals("test") && passwordInput.getText().equals("test"))){
             highPermission = true;
-        }
+        }else highPermission = false;
 
         if (isValid) {
             System.out.println("Login successful!");
@@ -124,8 +124,8 @@ class LoginPage {
             registerButton.setDisable(true);
             if( text.getText().equals(registerMessage)){
                 registerButton.setDisable(false);
+                System.out.println(registerMessage);
             }
-            System.out.println(registerMessage);
         }
     }
 

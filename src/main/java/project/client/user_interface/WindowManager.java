@@ -25,23 +25,17 @@ public class WindowManager {
     }
 
     public void showMenuPage(boolean highPermission) {
-        if (menuPage == null) {
-            menuPage = new MenuPage(this, highPermission);
-        }
+        menuPage = new MenuPage(this, highPermission);
         primaryStage.setScene(menuPage.getScene());
     }
 
     public void showUserPage() {
-        if (userPage == null) {
-            userPage = new UserPage(this);
-        }
+        userPage = new UserPage(this);
         primaryStage.setScene(userPage.getScene());
     }
 
     public void showAdminPage() throws NotBoundException, RemoteException {
-        if (adminPage == null) {
-            adminPage = new AdminPage(this);
-        }
+        adminPage = new AdminPage(this);
         primaryStage.setScene(adminPage.getScene());
     }
 

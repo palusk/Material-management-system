@@ -48,7 +48,7 @@ public class OrderTabCreator {
         productsDropdown.setValue("Select product");
 
         ComboBox<String> fromWarehouseDropdown = createDropdown(productsManager.getAllWarehouses(), dataProvider, tableView, productsDropdown);
-        ComboBox<String> toWarehouseDropdown = createDropdown(profilesManager.getWarehouseDropdown(employeeType), dataProvider, tableView, productsDropdown2);
+        ComboBox<String> toWarehouseDropdown = createDropdown(profilesManager.getWarehouseDropdown(employeeType, UserSession.userLogin), dataProvider, tableView, productsDropdown2);
 
 
 

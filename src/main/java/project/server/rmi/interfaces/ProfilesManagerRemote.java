@@ -7,5 +7,5 @@ import java.util.List;
 public interface ProfilesManagerRemote extends Remote {
     String updateProfiles() throws RemoteException;
     String getProfiles() throws RemoteException;
-    List<String> getWarehouseDropdown(int userID) throws RemoteException;
+    List<String> getWarehouseDropdown(int profileID, String loginUser) throws RemoteException;
 }

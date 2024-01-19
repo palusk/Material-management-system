@@ -28,19 +28,24 @@ public class MenuPage {
 
         // --TODO SPRAWDZIĆ CZY MOŻNA WYCIĄGNĄĆ PARAMETR DO ROZPOZNANIA POZIOMU DANEGO UŻYTKOWNIKA (W CELU UZYSKANIA LUB OGRANICZENIA WYBRANYCH OPCJI SYSTEMU)
 
+        Button adminPageButton = new Button("Go to Admin Page");
+        adminPageButton.setDisable(true);
+        adminPageButton.setOnAction(e -> {
+            try {
+                windowManager.showAdminPage();
+            } catch (NotBoundException ex) {
+                throw new RuntimeException(ex);
+            } catch (RemoteException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+        BorderPane.setAlignment(adminPageButton, javafx.geometry.Pos.CENTER);
+        pane.setCenter(adminPageButton);
+
         if(highPermission) {
-            Button adminPageButton = new Button("Go to Admin Page");
-            adminPageButton.setOnAction(e -> {
-                try {
-                    windowManager.showAdminPage();
-                } catch (NotBoundException ex) {
-                    throw new RuntimeException(ex);
-                } catch (RemoteException ex) {
-                    throw new RuntimeException(ex);
-                }
-            });
-            BorderPane.setAlignment(adminPageButton, javafx.geometry.Pos.CENTER);
-            pane.setCenter(adminPageButton);
+           adminPageButton.setDisable(false);
+        }else {
+            adminPageButton.setDisable(true);
         }
 
         Button loginPageButton = new Button("Logout");

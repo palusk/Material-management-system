@@ -30,7 +30,7 @@ public class PendingOrdersTabCreator {
         Label resultLabel = new Label();
 
         ComboBox<String> secondDropdown = createSecondDropdown(dataProvider, tableView, tableManager);
-        ComboBox<String> firstDropdown = createDropdown(profilesManager.getWarehouseDropdown(employeeType), dataProvider, tableView, tableManager, secondDropdown, productsManager);
+        ComboBox<String> firstDropdown = createDropdown(profilesManager.getWarehouseDropdown(employeeType, UserSession.userLogin), dataProvider, tableView, tableManager, secondDropdown, productsManager);
 
         Button generateProductsListButton = new Button("Generate Products List");
         generateProductsListButton.setOnAction(event -> {

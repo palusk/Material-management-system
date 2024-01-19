@@ -25,8 +25,8 @@ public class ProfilesManagerImpl extends UnicastRemoteObject implements Profiles
     }
 
     @Override
-    public List<String> getWarehouseDropdown(int userID) {
-        return profilesManager.getWarehouseDropdown(userID);
+    public List<String> getWarehouseDropdown(int profileID, String loginUser) {
+        return profilesManager.getWarehouseDropdown(profileID, loginUser);
     }
 
 }

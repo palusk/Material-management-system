@@ -50,8 +50,10 @@ public class ProfilesManager {
         return new Connector().callStoredProcedure("getAllWarehouses", null, true, false);
     }
 
-    public List<String> getWarehouseDropdown(int profileID){
-        int userID = Integer.parseInt(getUserID(UserSession.userLogin));
+    public List<String> getWarehouseDropdown(int profileID, String userLogin){
+        System.out.println(profileID);
+        System.out.println(getUserID(userLogin));
+        int userID = Integer.parseInt(getUserID(userLogin));
         System.out.println(userID);
         System.out.println(profileID);
             if(profileID == 0){

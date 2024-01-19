@@ -32,7 +32,7 @@ public class ProductsTabCreator {
         AuthenticationLDAP ldapObject = new AuthenticationLDAP();
         int employeeType = Integer.parseInt(ldapObject.getUserEmployeeType(UserSession.userLogin));
 
-        ComboBox<String> dropdown = createDropdown(profilesManager.getWarehouseDropdown(employeeType), dataProvider, tableView, tableManager);
+        ComboBox<String> dropdown = createDropdown(profilesManager.getWarehouseDropdown(employeeType, UserSession.userLogin), dataProvider, tableView, tableManager);
 
         VBox vbox = new VBox(dropdown, tableView);
         vbox.setPadding(new Insets(10));

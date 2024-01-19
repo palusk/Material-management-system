@@ -6,10 +6,9 @@ import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import project.client.TableManager;
-import project.client.interfaces.DataProviderRemote;
-import project.client.interfaces.ProductsManagerRemote;
-import project.client.interfaces.ProfilesManagerRemote;
-import project.client.interfaces.RemoteManager;
+import project.client.UserSession;
+import project.client.interfaces.*;
+import project.server.rmi.DataManagement.AuthenticationLDAP;
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -17,6 +16,12 @@ import java.util.List;
 
 public class PendingOrdersTabCreator {
     public static Tab create(RemoteManager remoteManager, DataProviderRemote dataProvider) throws NotBoundException, RemoteException {
+
+
+        AuthenticationLDAPRemote ldapConnect = remoteManager.getAuthenticationLDAP();
+        boolean highPermission = false;
+        AuthenticationLDAP ldapObject = new AuthenticationLDAP();
+        int employeeType = Integer.parseInt(ldapObject.getUserEmployeeType(UserSession.userLogin));
         Tab tab = new Tab("Pending orders");
         TableManager tableManager = new TableManager();
         ProfilesManagerRemote profilesManager = remoteManager.getProfilesManager();
@@ -25,7 +30,7 @@ public class PendingOrdersTabCreator {
         Label resultLabel = new Label();
 
         ComboBox<String> secondDropdown = createSecondDropdown(dataProvider, tableView, tableManager);
-        ComboBox<String> firstDropdown = createDropdown(profilesManager.getWarehouseDropdown(2), dataProvider, tableView, tableManager, secondDropdown, productsManager);
+        ComboBox<String> firstDropdown = createDropdown(profilesManager.getWarehouseDropdown(employeeType), dataProvider, tableView, tableManager, secondDropdown, productsManager);
 
         Button generateProductsListButton = new Button("Generate Products List");
         generateProductsListButton.setOnAction(event -> {

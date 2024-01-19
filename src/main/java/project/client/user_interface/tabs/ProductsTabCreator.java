@@ -8,9 +8,13 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.VBox;
 import project.client.TableManager;
+import project.client.UserSession;
+import project.client.interfaces.AuthenticationLDAPRemote;
 import project.client.interfaces.DataProviderRemote;
 import project.client.interfaces.ProfilesManagerRemote;
 import project.client.interfaces.RemoteManager;
+import project.server.rmi.DataManagement.AuthenticationLDAP;
+
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.List;
@@ -23,7 +27,12 @@ public class ProductsTabCreator {
         ProfilesManagerRemote profilesManager = remoteManager.getProfilesManager();
         TableView<ObservableList<String>> tableView = new TableView<>();
 
-        ComboBox<String> dropdown = createDropdown(profilesManager.getWarehouseDropdown(2), dataProvider, tableView, tableManager);
+        AuthenticationLDAPRemote ldapConnect = remoteManager.getAuthenticationLDAP();
+        boolean highPermission = false;
+        AuthenticationLDAP ldapObject = new AuthenticationLDAP();
+        int employeeType = Integer.parseInt(ldapObject.getUserEmployeeType(UserSession.userLogin));
+
+        ComboBox<String> dropdown = createDropdown(profilesManager.getWarehouseDropdown(employeeType), dataProvider, tableView, tableManager);
 
         VBox vbox = new VBox(dropdown, tableView);
         vbox.setPadding(new Insets(10));

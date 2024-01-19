@@ -9,6 +9,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import project.client.RemoteManagerImpl;
+import project.client.UserSession;
 import project.client.interfaces.AuthenticationLDAPRemote;
 import project.client.interfaces.RemoteManager;
 import project.server.rmi.DataManagement.AuthenticationLDAP;
@@ -18,6 +19,7 @@ import java.rmi.RemoteException;
 
 class LoginPage {
 
+    public UserSession userSession;
     private WindowManager windowManager;
     private BorderPane pane;
     private TextField usernameInput;
@@ -132,6 +134,7 @@ class LoginPage {
     }
 
     private void openMainPanel(boolean highPermission) throws Exception {
+        UserSession.setUserLoginUserSession(usernameInput.getText());
         windowManager.showMenuPage(highPermission);
     }
 

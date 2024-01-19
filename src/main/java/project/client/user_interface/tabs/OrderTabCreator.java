@@ -5,10 +5,9 @@ import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import project.client.interfaces.DataProviderRemote;
-import project.client.interfaces.ProductsManagerRemote;
-import project.client.interfaces.ProfilesManagerRemote;
-import project.client.interfaces.RemoteManager;
+import project.client.UserSession;
+import project.client.interfaces.*;
+import project.server.rmi.DataManagement.AuthenticationLDAP;
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -20,8 +19,10 @@ public class OrderTabCreator {
 
     public static Tab create(RemoteManager remoteManager, DataProviderRemote dataProvider) throws NotBoundException, RemoteException {
 
-
-
+        AuthenticationLDAPRemote ldapConnect = remoteManager.getAuthenticationLDAP();
+        boolean highPermission = false;
+        AuthenticationLDAP ldapObject = new AuthenticationLDAP();
+        int employeeType = Integer.parseInt(ldapObject.getUserEmployeeType(UserSession.userLogin));
         ProductsManagerRemote productsManager = remoteManager.getProductsManager();
 
         Tab tab = new Tab("Orders creator");
@@ -47,7 +48,7 @@ public class OrderTabCreator {
         productsDropdown.setValue("Select product");
 
         ComboBox<String> fromWarehouseDropdown = createDropdown(productsManager.getAllWarehouses(), dataProvider, tableView, productsDropdown);
-        ComboBox<String> toWarehouseDropdown = createDropdown(profilesManager.getWarehouseDropdown(2), dataProvider, tableView, productsDropdown2);
+        ComboBox<String> toWarehouseDropdown = createDropdown(profilesManager.getWarehouseDropdown(employeeType), dataProvider, tableView, productsDropdown2);
 
 
 

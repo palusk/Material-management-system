@@ -8,9 +8,24 @@ public class ProfilesManager {
 
     public static String updateProfiles() {
         String output;
-        String data = getDataForLDAP();
-        System.out.println(data);
+        String dataForLDAP = getDataForLDAP();
+        System.out.println(dataForLDAP);
+        AuthenticationLDAP ldap = new AuthenticationLDAP();
         output = new Connector().callStoredProcedure("updateProfiles", null, false);
+        String[] rows = dataForLDAP.split("\n");
+        String cn, sn, mail, employeeType;
+        // Iterujemy po każdym wierszu
+        for (String row : rows) {
+            // Dzielimy wiersz na pola używając znaku średnika jako separatora
+            String[] fields = row.split(";");
+
+                cn = fields[0];
+                sn = fields[1];
+                mail = fields[2];
+                employeeType = fields[3];
+                ldap.addUser(cn,sn,mail,employeeType);
+            }
+
         return output;
     }
 

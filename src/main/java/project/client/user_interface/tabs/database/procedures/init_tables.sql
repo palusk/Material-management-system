@@ -24,7 +24,6 @@ BEGIN
                                       user_id INT AUTO_INCREMENT PRIMARY KEY,
                                       employee_id INT,
                                       email VARCHAR(100) NOT NULL,
-                                      password_hash VARCHAR(255),
                                       registration_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
                                       FOREIGN KEY (employee_id) REFERENCES employees(employee_id)
     );

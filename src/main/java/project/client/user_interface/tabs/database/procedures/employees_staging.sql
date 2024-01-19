@@ -28,11 +28,10 @@ BEGIN
 
     SET last_employee_id = LAST_INSERT_ID();
 
-    INSERT INTO users (employee_id, email, password_hash)
-    VALUES (LAST_INSERT_ID(), p_email, NULL)
+    INSERT INTO users (employee_id, email)
+    VALUES (LAST_INSERT_ID(), p_email)
     ON DUPLICATE KEY UPDATE
-                         email = VALUES(email),
-                         password_hash = VALUES(password_hash);
+                         email = VALUES(email);
 
     -- Przypisanie user_id do tabeli employees
     UPDATE employees e

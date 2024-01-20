@@ -1,64 +1,64 @@
 package project.client;
 
+import javafx.application.Platform;
 import javafx.stage.FileChooser;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import javafx.stage.Stage;
 import java.io.File;
-import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ExcelGenerator {
 
-    public void generateExcelFile(String sheetName, String[] headers) {
-        Workbook workbook = new XSSFWorkbook();
-        Sheet sheet = workbook.createSheet(sheetName);
-
-        Row headerRow = sheet.createRow(0);
-        for (int i = 0; i < headers.length; i++) {
-            Cell cell = headerRow.createCell(i);
-            cell.setCellValue(headers[i]);
-        }
-
-        Object[][] data;
+    public void generateExcelFile(String sheetName, String[] headers, Stage primaryStage) {
 
         if (sheetName.equals("Employee Data")) {
-            data = new Object[][]{
-                    {"Jan", "Kowalski", "jan.kowalski@example.com", "Manager", 101},
-                    {"Adam", "Nowak", "adam.nowak@example.com", "Senior Worker", 102}
-            };
+            List<Object[]> employeeData = new ArrayList<>();
+            employeeData.add(new Object[]{"Jan", "Kowalski", "jan.kowalski@example.com", "Manager", 101, 1});
+            generateCsvFile(sheetName, headers, employeeData, primaryStage);
         } else {
-            data = new Object[][]{
-                    {"100", "10", "1", "31.12.2025"},
-                    {"200", "100", "2", "31.12.2026"}
-            };
+            List<Object[]> employeeData = new ArrayList<>();
+            employeeData.add(new Object[]{"1", "100", "1", "2025-01-01"});
+            generateCsvFile(sheetName, headers, employeeData, primaryStage);
         }
+    }
 
-        int rowNum = 1;
-        for (Object[] rowData : data) {
-            Row row = sheet.createRow(rowNum++);
-            for (int i = 0; i < rowData.length; i++) {
-                Cell cell = row.createCell(i);
-                if (rowData[i] instanceof String) {
-                    cell.setCellValue((String) rowData[i]);
-                } else if (rowData[i] instanceof Integer) {
-                    cell.setCellValue((Integer) rowData[i]);
-                }
-            }
-        }
-
-        try {
+    public void generateCsvFile(String fileName, String[] headers, List<Object[]> data, Stage primaryStage) {
+        Platform.runLater(() -> {
             FileChooser fileChooser = new FileChooser();
-            fileChooser.setInitialFileName(sheetName.toLowerCase().replace(" ", "_") + ".csv");
-            File file = fileChooser.showSaveDialog(null);
+            fileChooser.setInitialFileName(fileName.toLowerCase().replace(" ", "_") + ".csv");
+            FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("CSV files (*.csv)", "*.csv");
+            fileChooser.getExtensionFilters().add(extFilter);
+            File file = fileChooser.showSaveDialog(primaryStage);
 
             if (file != null) {
-                try (FileOutputStream fileOut = new FileOutputStream(file)) {
-                    workbook.write(fileOut);
-                    System.out.println("Excel file generated successfully!");
+                saveCsvFile(file, headers, data);
+                System.out.println("CSV file generated successfully!");
+            }
+        });
+    }
+
+    private void saveCsvFile(File file, String[] headers, List<Object[]> data) {
+        try (FileWriter writer = new FileWriter(file)) {
+            // Dodaj nagłówki do pliku CSV
+            for (int i = 0; i < headers.length; i++) {
+                writer.append(headers[i]);
+                if (i < headers.length - 1) {
+                    writer.append(";");
                 }
+            }
+            writer.append("\n");
+
+            // Dodaj dane do pliku CSV
+            for (Object[] rowData : data) {
+                for (int i = 0; i < rowData.length; i++) {
+                    writer.append(String.valueOf(rowData[i]));
+                    if (i < rowData.length - 1) {
+                        writer.append(";");
+                    }
+                }
+                writer.append("\n");
             }
         } catch (IOException e) {
             e.printStackTrace();

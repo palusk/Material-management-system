@@ -118,6 +118,6 @@ public class ProductManagementTabCreator {
     }
 
     private void handleGenerateProductExcel() {
-        excelGenerator.generateExcelFile("Product Data", new String[]{"product_id", "quantity", "warehouse_id", "expiration_date"});
+        excelGenerator.generateExcelFile("Product Data", new String[]{"product_id", "quantity", "warehouse_id", "expiration_date"}, windowManager.getStage());
     }
 }

@@ -127,8 +127,6 @@ public class Connector {
         for (String line : inputString) {
             if (!line.trim().isEmpty()) {
                 String[] columns = line.split(";");
-                System.out.println(columnsNumber);
-                System.out.println(columns.length);
 
                 if (columns.length == columnsNumber) {
                     try {

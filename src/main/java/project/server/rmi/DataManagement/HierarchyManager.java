@@ -11,7 +11,8 @@ public class HierarchyManager {
 
     public static String loadEmployeesFromCSV(String csvFile) {
         try {
-            List<String> dataList = importer.csvReader(csvFile);
+            List<String> dataList = importer.csvReader(csvFile,2);
+            if(dataList.get(0).equals("Error")) {return "CSV read failed";}
             String error = HierarchyManager.insertDataIntoStaging(dataList);
             if (error.isEmpty()) {
                 error = HierarchyManager.triggerValidation();

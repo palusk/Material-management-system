@@ -151,7 +151,7 @@ public class EmployeeManagementTabCreator {
     }
 
     private void handleGenerateEmployeeExcel() {
-        excelGenerator.generateExcelFile("Employee Data", new String[]{"firstname", "lastname", "email", "position", "warehouse_id"});
+        excelGenerator.generateExcelFile("Employee Data", new String[]{"firstname", "lastname", "email", "position", "warehouse_id","reports_to"},windowManager.getStage());
     }
 
 }

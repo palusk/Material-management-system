@@ -88,7 +88,10 @@ public class OrderTabCreator {
             System.out.println("test");
             if (toWarehouseDropdown.getValue().equals("Select warehouse") || fromWarehouseDropdown.getValue().equals("Select warehouse")) {
                 resultLabel.setText("Choose warehouse first");
-            } else {
+            } else if (toWarehouseDropdown.getValue().equals(fromWarehouseDropdown.getValue())){
+                resultLabel.setText("You can't order products to the same warehouse");
+            }
+            else{
                 try {
                     // Pobierz dane z tabeli
                     StringBuilder orderDetails = new StringBuilder();
@@ -110,8 +113,8 @@ public class OrderTabCreator {
                     e.printStackTrace();
                 }
 
-
             }
+
         });
 
         VBox vbox = new VBox(labelFrom,fromWarehouseDropdown,labelTo, toWarehouseDropdown ,productsDropdown, numericInput,

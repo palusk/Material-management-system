@@ -74,7 +74,7 @@ BEGIN
                                                           quantity INT,
                                                           warehouse_id INT,
                                                           expiration_date DATE,
-                                                          load_status ENUM('Pending', 'Processed', 'Error') DEFAULT 'Pending',
+                                                          load_status VARCHAR(255),
                                                           load_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                                                           error_message VARCHAR(255)
     );
@@ -87,7 +87,7 @@ BEGIN
                                                   position VARCHAR(50),
                                                   warehouse_id INT,
                                                   reports_to INT,
-                                                  load_status ENUM('Pending', 'Processed', 'Error') DEFAULT 'Pending',
+                                                  load_status VARCHAR(255),
                                                   load_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                                                   error_message VARCHAR(255)
     );

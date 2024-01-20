@@ -1,26 +1,80 @@
 DELIMITER //
 
+
+
+
+CREATE OR REPLACE PROCEDURE updateIncorrectFile(
+    IN p_product_id INT,
+    IN p_quantity INT,
+    IN p_warehouse_id INT,
+    IN p_expiration_date VARCHAR(50)
+)
+BEGIN
+    -- Wstawienie danych do tabeli staging_products_in_stock
+
+    UPDATE staging_products_in_stock
+    SET load_status = 'incorrect file'
+    WHERE load_status = 'Pending';
+
+END //
+
 CREATE OR REPLACE PROCEDURE InsertStagingProductInStock(
     IN p_product_id INT,
     IN p_quantity INT,
     IN p_warehouse_id INT,
-    IN p_expiration_date DATE
+    IN p_expiration_date VARCHAR(50)
 )
 BEGIN
-    INSERT INTO staging_products_in_stock (
-        product_id,
-        quantity,
-        warehouse_id,
-        expiration_date,
-        load_status
-    )
-    VALUES (
-               p_product_id,
-               p_quantity,
-               p_warehouse_id,
-               p_expiration_date,
-               'Pending'
-           );
+    DECLARE exit handler FOR SQLEXCEPTION
+        BEGIN
+            INSERT INTO staging_products_in_stock (
+                product_id,
+                quantity,
+                warehouse_id,
+                expiration_date,
+                load_status
+            )
+            VALUES (
+                       p_product_id,
+                       0,  -- default to 0 quantity
+                       p_warehouse_id,
+                       DATE_FORMAT(STR_TO_DATE(p_expiration_date, '%d.%m.%Y'), '%Y-%m-%d'),
+                       'row error'
+                   );
+        END;
+
+
+    IF p_quantity IS NULL OR p_quantity < 0 THEN
+        INSERT INTO staging_products_in_stock (
+            product_id,
+            quantity,
+            warehouse_id,
+            expiration_date,
+            load_status
+        )
+        VALUES (
+                   p_product_id,
+                   0,
+                   p_warehouse_id,
+                   DATE_FORMAT(STR_TO_DATE(p_expiration_date, '%d.%m.%Y'), '%Y-%m-%d'),
+                   'InvalidQuantity'
+               );
+    ELSE
+        INSERT INTO staging_products_in_stock (
+            product_id,
+            quantity,
+            warehouse_id,
+            expiration_date,
+            load_status
+        )
+        VALUES (
+                   p_product_id,
+                   p_quantity,
+                   p_warehouse_id,
+                   DATE_FORMAT(STR_TO_DATE(p_expiration_date, '%d.%m.%Y'), '%Y-%m-%d'),
+                   'Pending'
+               );
+    END IF;
 END //
 
 CREATE OR REPLACE PROCEDURE DeleteAllProductStagingRows()

@@ -85,8 +85,6 @@ CREATE OR REPLACE PROCEDURE LoadRowIntoEmployees(
 )
 BEGIN
     DECLARE v_warehouse_exists INT;
-    DECLARE v_load_status VARCHAR(20);
-    DECLARE v_error_message VARCHAR(255);
 
     START TRANSACTION;
 
@@ -94,21 +92,27 @@ BEGIN
     FROM warehouses
     WHERE warehouse_id = p_warehouse_id;
 
-    IF v_warehouse_exists = 1 THEN
+    IF v_warehouse_exists = 1 AND p_email REGEXP '^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,4}$' THEN
 
         CALL InsertOrUpdateEmployee(p_first_name, p_last_name, p_email, p_position, p_warehouse_id, p_reports_to, p_staging_id);
+        UPDATE staging_employees
+        SET load_status = 'Processed'
+        WHERE staging_id = p_staging_id;
 
+    ELSEIF v_warehouse_exists != 1
+        THEN
+            UPDATE staging_employees
+            SET load_status = 'Error',
+                error_message = 'Wrong warehouse id'
+            WHERE staging_id = p_staging_id;
     ELSE
 
-        SET v_load_status = 'Error';
-        SET v_error_message = 'Wrong warehouse id';
+        UPDATE staging_employees
+        SET load_status = 'Error',
+            error_message = 'Wrong email'
+        WHERE staging_id = p_staging_id;
 
     END IF;
-
-    UPDATE staging_employees
-    SET load_status = v_load_status,
-        error_message = v_error_message
-    WHERE staging_id = p_staging_id;
 
     COMMIT;
 END //
@@ -151,8 +155,13 @@ BEGIN
         END IF;
 
         -- Call the procedure for each pending row
-        CALL LoadRowIntoEmployees(p_staging_id, p_first_name, p_last_name, p_email, p_position, p_warehouse_id,p_reports_to);
-    END LOOP;
+        IF NOT EXISTS(SELECT * FROM employees e WHERE e.email = p_email)
+            THEN
+                CALL LoadRowIntoEmployees(p_staging_id, p_first_name, p_last_name, p_email, p_position, p_warehouse_id,p_reports_to);
+            ELSE
+                UPDATE staging_employees se SET se.error_message = 'duplicate or empty email' , se.load_status = 'error' WHERE se.staging_id = p_staging_id;
+        END IF;
+        END LOOP;
 
     -- Close the cursor
     CLOSE cursor_pending_rows;

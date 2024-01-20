@@ -44,7 +44,7 @@ BEGIN
         REPEAT
             INSERT IGNORE INTO employee_hierarchy (warehouse_id, employee_id, descendant_id, level)
             SELECT warehouseId,e.employee_id,
-                   IF(eh.descendant_id IS NULL, -2, eh.descendant_id),(maxLevel + 1)
+                   IF(eh.descendant_id IS NULL, -2, eh.employee_id),(maxLevel + 1)
             FROM employees e
                      LEFT JOIN employee_hierarchy eh ON e.reports_to = eh.employee_id AND eh.level = maxLevel
             WHERE e.warehouse_id = warehouseId

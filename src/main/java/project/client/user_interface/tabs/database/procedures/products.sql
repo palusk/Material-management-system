@@ -34,8 +34,6 @@ BEGIN
       AND product_id = transferred_product_id
       AND expiration_date = transferred_expiration_date;
 
-    SELECT available_quantity;
-
     -- Check if there is enough quantity to transfer
     IF transferred_quantity <= available_quantity THEN
         -- Deduct transferred quantity from the source warehouse
@@ -54,7 +52,6 @@ BEGIN
                   AND expiration_date = transferred_expiration_date
             ) THEN
 
-            SELECT 1;
             -- If the product exists, update its quantity
             UPDATE products_in_stock
             SET quantity = quantity + transferred_quantity
@@ -62,8 +59,6 @@ BEGIN
               AND product_id = transferred_product_id
               AND expiration_date = transferred_expiration_date;
         ELSE
-            SELECT (destination_warehouse_id, transferred_product_id, transferred_expiration_date, transferred_quantity);
-            SELECT 2;
             -- If the product does not exist, insert a new record
             INSERT INTO products_in_stock (warehouse_id, product_id, expiration_date, quantity)
             VALUES (destination_warehouse_id, transferred_product_id, transferred_expiration_date, transferred_quantity);

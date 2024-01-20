@@ -154,6 +154,12 @@ BEGIN
                  JOIN products_list pl ON p.product_name = pl.product_name
         WHERE od.order_id = p_order_id;
 
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+        BEGIN
+            SELECT 'error';
+            ROLLBACK;
+        END;
+
     DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
 
     CREATE TEMPORARY TABLE IF NOT EXISTS products_list_transfer (
@@ -167,6 +173,7 @@ BEGIN
     SET po.status_id = 2
     WHERE po.order_id = p_order_id;
 
+    -- INSERT INTO pending_orders SELECT 1,1,1,1,1,1,1,1;
 
     CREATE TEMPORARY TABLE IF NOT EXISTS products_list (
                                                            expiration_date DATE,
@@ -184,7 +191,6 @@ BEGIN
 
         CALL listProductsToTransferForSingleRow(source_warehouse_id, transferred_product_id, transferred_quantity);
     END LOOP read_loop;
-    SELECT * FROM products_list;
     CLOSE cur;
 
     SET done = FALSE;
@@ -212,7 +218,7 @@ BEGIN
     CLOSE cur_orders;
 
     DROP TEMPORARY TABLE IF EXISTS products_list;
-
+    SELECT 1;
     COMMIT;
 
 END//

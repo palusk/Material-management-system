@@ -27,7 +27,7 @@ public class ProductsManager {
 
     public static String completeOrder(String orderIDs) {
         //new Connector().callStoredProcedure("completeOrder", new Object[]{orderIDs}, false,false);
-        return new Connector().callStoredProcedure("completeOrder", new Object[]{orderIDs}, false,false);
+        return new Connector().callStoredProcedure("completeOrder", new Object[]{orderIDs}, true,false);
     }
 
     public static String getAllWarehousesString() {

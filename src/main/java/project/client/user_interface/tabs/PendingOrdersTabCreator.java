@@ -39,9 +39,9 @@ public class PendingOrdersTabCreator {
         completeOrder.setDisable(true);
 
         ComboBox<String> secondDropdown = createSecondDropdown(dataProvider, tableView, tableManager, productsManager,
-                generateProductsListButton, cancelOrder, completeOrder);
+                generateProductsListButton, cancelOrder, completeOrder, resultLabel);
         ComboBox<String> firstDropdown = createDropdown(profilesManager.getWarehouseDropdown(employeeType,
-                UserSession.userLogin), dataProvider, tableView, tableManager, secondDropdown, productsManager);
+                UserSession.userLogin), dataProvider, tableView, tableManager, secondDropdown, productsManager, resultLabel);
 
 
         generateProductsListButton.setOnAction(event -> {
@@ -54,6 +54,7 @@ public class PendingOrdersTabCreator {
                         int index = selectedValue.indexOf(" ");
                         String orderID = selectedValue.substring(0, index);
                         tableManager.printTable(productsManager.listProductsToTransfer(orderID), tableView);
+                        resultLabel.setText("order list generated");
                     } catch (RemoteException e) {
                         throw new RuntimeException(e);
                     }
@@ -79,7 +80,7 @@ public class PendingOrdersTabCreator {
                     String[] ordersArray = ordersString.split(";");
                     ObservableList<String> ordersList = FXCollections.observableArrayList(ordersArray);
                     secondDropdown.setItems(ordersList);
-
+                    resultLabel.setText("order canceled");
                     generateProductsListButton.setDisable(true);
                     cancelOrder.setDisable(true);
                     completeOrder.setDisable(true);
@@ -100,21 +101,28 @@ public class PendingOrdersTabCreator {
                     String selectedValue = secondDropdown.getValue();
                     int index = selectedValue.indexOf(" ");
                     String orderID = selectedValue.substring(0, index);
-                    productsManager.completeOrder(orderID);
+                    String output = productsManager.completeOrder(orderID);
 
-                    String selectedWarehouseValue = firstDropdown.getValue();
-                    int warehouseIndex = selectedWarehouseValue.indexOf(" ");
-                    String warehouseID = selectedWarehouseValue.substring(0, warehouseIndex);
-                    String ordersString = productsManager.getOrdersInWarehouse(warehouseID);
-                    ordersString = ordersString.replace("\n", "");
-                    String[] ordersArray = ordersString.split(";");
-                    ObservableList<String> ordersList = FXCollections.observableArrayList(ordersArray);
-                    secondDropdown.setItems(ordersList);
-                    secondDropdown.setDisable(false);
+                    if(!output.contains("error")){
 
-                    generateProductsListButton.setDisable(true);
-                    cancelOrder.setDisable(true);
-                    completeOrder.setDisable(true);
+                        String selectedWarehouseValue = firstDropdown.getValue();
+                        int warehouseIndex = selectedWarehouseValue.indexOf(" ");
+                        String warehouseID = selectedWarehouseValue.substring(0, warehouseIndex);
+                        String ordersString = productsManager.getOrdersInWarehouse(warehouseID);
+                        ordersString = ordersString.replace("\n", "");
+                        String[] ordersArray = ordersString.split(";");
+                        ObservableList<String> ordersList = FXCollections.observableArrayList(ordersArray);
+
+                        secondDropdown.setItems(ordersList);
+                        secondDropdown.setDisable(false);
+                        resultLabel.setText("order completed");
+                        generateProductsListButton.setDisable(true);
+                        cancelOrder.setDisable(true);
+                        completeOrder.setDisable(true);
+
+                    } else{
+                        resultLabel.setText("Order not completed! Please contact your admnistrator");
+                    }
 
                 } catch (RemoteException e) {
                     throw new RuntimeException(e);
@@ -132,7 +140,8 @@ public class PendingOrdersTabCreator {
 
     private static ComboBox<String> createDropdown(List<String> warehouseDropdown, DataProviderRemote dataProvider,
                                                    TableView<ObservableList<String>> tableView, TableManager tableManager,
-                                                   ComboBox<String> secondDropdown, ProductsManagerRemote productsManager) {
+                                                   ComboBox<String> secondDropdown, ProductsManagerRemote productsManager,
+                                                   Label resultLabel) {
         ComboBox<String> dropdown = new ComboBox<>();
 
         dropdown.setItems(FXCollections.observableArrayList(warehouseDropdown));
@@ -150,6 +159,7 @@ public class PendingOrdersTabCreator {
                 ObservableList<String> ordersList = FXCollections.observableArrayList(ordersArray);
                 secondDropdown.setItems(ordersList);
                 secondDropdown.setDisable(false);
+                resultLabel.setText("");
                 System.out.println(ordersList);
             } catch (RemoteException e) {
                 throw new RuntimeException(e);
@@ -161,7 +171,8 @@ public class PendingOrdersTabCreator {
 
     private static ComboBox<String> createSecondDropdown(DataProviderRemote dataProvider, TableView<ObservableList<String>> tableView,
                                                          TableManager tableManager, ProductsManagerRemote productsManager,
-                                                        Button generateProductsList, Button cancelOrder, Button completeOrder) {
+                                                        Button generateProductsList, Button cancelOrder, Button completeOrder,
+                                                         Label resultLabel) {
         ComboBox<String> dropdown = new ComboBox<>();
 
         // Początkowo drugi dropdown jest pusty
@@ -178,7 +189,7 @@ public class PendingOrdersTabCreator {
                 tableManager.printTable(dataProvider.getOrderDetails(orderID), tableView);
                 String orderStatus = productsManager.getOrderStatus(Integer.parseInt(orderID));
                 System.out.println(orderStatus);
-
+                resultLabel.setText("");
                 if(orderStatus.equals("pending")){
                     generateProductsList.setDisable(false);
                     cancelOrder.setDisable(false);

@@ -22,17 +22,28 @@ public class PendingOrdersTabCreator {
         boolean highPermission = false;
         AuthenticationLDAP ldapObject = new AuthenticationLDAP();
         int employeeType = Integer.parseInt(ldapObject.getUserEmployeeType(UserSession.userLogin));
-        Tab tab = new Tab("Pending orders");
+        Tab tab = new Tab("All orders");
         TableManager tableManager = new TableManager();
         ProfilesManagerRemote profilesManager = remoteManager.getProfilesManager();
         ProductsManagerRemote productsManager = remoteManager.getProductsManager();
         TableView<ObservableList<String>> tableView = new TableView<>();
         Label resultLabel = new Label();
 
-        ComboBox<String> secondDropdown = createSecondDropdown(dataProvider, tableView, tableManager);
-        ComboBox<String> firstDropdown = createDropdown(profilesManager.getWarehouseDropdown(employeeType, UserSession.userLogin), dataProvider, tableView, tableManager, secondDropdown, productsManager);
 
         Button generateProductsListButton = new Button("Generate Products List");
+        Button cancelOrder = new Button("Cancel order");
+        Button completeOrder = new Button("Complete order");
+
+        generateProductsListButton.setDisable(true);
+        cancelOrder.setDisable(true);
+        completeOrder.setDisable(true);
+
+        ComboBox<String> secondDropdown = createSecondDropdown(dataProvider, tableView, tableManager, productsManager,
+                generateProductsListButton, cancelOrder, completeOrder);
+        ComboBox<String> firstDropdown = createDropdown(profilesManager.getWarehouseDropdown(employeeType,
+                UserSession.userLogin), dataProvider, tableView, tableManager, secondDropdown, productsManager);
+
+
         generateProductsListButton.setOnAction(event -> {
 
                 if(secondDropdown.equals("Select a value")){
@@ -49,7 +60,6 @@ public class PendingOrdersTabCreator {
             }
         });
 
-        Button cancelOrder = new Button("Cancel order");
         cancelOrder.setOnAction(event -> {
 
             if(secondDropdown.equals("Select a value")){
@@ -70,6 +80,10 @@ public class PendingOrdersTabCreator {
                     ObservableList<String> ordersList = FXCollections.observableArrayList(ordersArray);
                     secondDropdown.setItems(ordersList);
 
+                    generateProductsListButton.setDisable(true);
+                    cancelOrder.setDisable(true);
+                    completeOrder.setDisable(true);
+
                     secondDropdown.setDisable(false);
                 } catch (RemoteException e) {
                     throw new RuntimeException(e);
@@ -77,7 +91,6 @@ public class PendingOrdersTabCreator {
             }
         });
 
-        Button completeOrder = new Button("Complete order");
         completeOrder.setOnAction(event -> {
 
             if(secondDropdown.equals("Select a value")){
@@ -98,6 +111,11 @@ public class PendingOrdersTabCreator {
                     ObservableList<String> ordersList = FXCollections.observableArrayList(ordersArray);
                     secondDropdown.setItems(ordersList);
                     secondDropdown.setDisable(false);
+
+                    generateProductsListButton.setDisable(true);
+                    cancelOrder.setDisable(true);
+                    completeOrder.setDisable(true);
+
                 } catch (RemoteException e) {
                     throw new RuntimeException(e);
                 }
@@ -112,7 +130,9 @@ public class PendingOrdersTabCreator {
         return tab;
     }
 
-    private static ComboBox<String> createDropdown(List<String> warehouseDropdown, DataProviderRemote dataProvider, TableView<ObservableList<String>> tableView, TableManager tableManager, ComboBox<String> secondDropdown, ProductsManagerRemote productsManager) {
+    private static ComboBox<String> createDropdown(List<String> warehouseDropdown, DataProviderRemote dataProvider,
+                                                   TableView<ObservableList<String>> tableView, TableManager tableManager,
+                                                   ComboBox<String> secondDropdown, ProductsManagerRemote productsManager) {
         ComboBox<String> dropdown = new ComboBox<>();
 
         dropdown.setItems(FXCollections.observableArrayList(warehouseDropdown));
@@ -120,7 +140,6 @@ public class PendingOrdersTabCreator {
 
         dropdown.setOnAction(event -> {
             try {
-                secondDropdown.setValue("Select a value");
                 String selectedValue = dropdown.getValue();
                 int index = selectedValue.indexOf(" ");
                 String warehouseID = selectedValue.substring(0, index);
@@ -140,7 +159,9 @@ public class PendingOrdersTabCreator {
         return dropdown;
     }
 
-    private static ComboBox<String> createSecondDropdown(DataProviderRemote dataProvider, TableView<ObservableList<String>> tableView, TableManager tableManager) {
+    private static ComboBox<String> createSecondDropdown(DataProviderRemote dataProvider, TableView<ObservableList<String>> tableView,
+                                                         TableManager tableManager, ProductsManagerRemote productsManager,
+                                                        Button generateProductsList, Button cancelOrder, Button completeOrder) {
         ComboBox<String> dropdown = new ComboBox<>();
 
         // Początkowo drugi dropdown jest pusty
@@ -155,6 +176,19 @@ public class PendingOrdersTabCreator {
                 System.out.println(orderID);
                 System.out.println(dataProvider.getOrderDetails(orderID));
                 tableManager.printTable(dataProvider.getOrderDetails(orderID), tableView);
+                String orderStatus = productsManager.getOrderStatus(Integer.parseInt(orderID));
+                System.out.println(orderStatus);
+
+                if(orderStatus.equals("pending")){
+                    generateProductsList.setDisable(false);
+                    cancelOrder.setDisable(false);
+                    completeOrder.setDisable(false);
+                }else{
+                    generateProductsList.setDisable(true);
+                    cancelOrder.setDisable(true);
+                    completeOrder.setDisable(true);
+                }
+
             } catch (RemoteException e) {
                 throw new RuntimeException(e);
             }

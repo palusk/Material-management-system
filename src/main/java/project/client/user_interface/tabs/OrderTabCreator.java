@@ -76,6 +76,12 @@ public class OrderTabCreator {
             }
         }});
 
+        Button clearOrder = new Button("Clear Order");
+        clearOrder.setOnAction(event -> {
+            resultLabel.setText("Order list cleard");
+            tableView.getItems().clear();
+            });
+
         // Dodaj przycisk "Create Order"
         Button createOrderButton = new Button("Create Order");
         createOrderButton.setOnAction(event -> {
@@ -94,10 +100,13 @@ public class OrderTabCreator {
                         int productID = Integer.parseInt(product.substring(0, product.indexOf(" ")));
                         orderDetails.append(productID).append(";").append(fromWareHouseID).append(";").append(quantity).append(";").append(toWareHouseID).append(";");
                     }
+                    resultLabel.setText("Order created");
                     System.out.println(orderDetails.toString());
                     System.out.println(mergeAndSumOrders(orderDetails.toString()));
+                    tableView.getItems().clear();
                     productsManager.insertStagingOrder(mergeAndSumOrders(orderDetails.toString()));
                 } catch (Exception e) {
+                    resultLabel.setText("Error");
                     e.printStackTrace();
                 }
 
@@ -105,7 +114,8 @@ public class OrderTabCreator {
             }
         });
 
-        VBox vbox = new VBox(labelFrom,fromWarehouseDropdown,labelTo, toWarehouseDropdown ,productsDropdown, numericInput, addToOrderButton, tableView, createOrderButton, resultLabel);
+        VBox vbox = new VBox(labelFrom,fromWarehouseDropdown,labelTo, toWarehouseDropdown ,productsDropdown, numericInput,
+                addToOrderButton, tableView, createOrderButton, resultLabel, clearOrder);
         vbox.setPadding(new javafx.geometry.Insets(10));
 
         tab.setContent(vbox);

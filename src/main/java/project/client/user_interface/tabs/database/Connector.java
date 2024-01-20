@@ -129,6 +129,7 @@ public class Connector {
                 String[] columns = line.split(";");
                 System.out.println(columnsNumber);
                 System.out.println(columns.length);
+
                 if (columns.length == columnsNumber) {
                     try {
                         callStoredProcedure(procedureName, columns, false);

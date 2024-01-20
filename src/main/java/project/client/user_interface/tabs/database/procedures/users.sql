@@ -40,7 +40,6 @@ BEGIN
     FROM users_profiles up JOIN profiles p on p.profile_id = up.profile_id JOIN employees e on up.employee_id = e.employee_id;
 END //
 
-
 CREATE OR REPLACE PROCEDURE getUserWarehouse(
     IN p_user_id INT
 )
@@ -60,6 +59,5 @@ BEGIN
     FROM users u
     WHERE u.email = p_mail;
 END //
-
 
 DELIMITER ;

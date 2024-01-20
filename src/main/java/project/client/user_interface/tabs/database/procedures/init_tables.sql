@@ -106,14 +106,7 @@ BEGIN
                                          profile_name VARCHAR(50) NOT NULL
     );
 
-    INSERT INTO profiles (profile_id, profile_name)
-    VALUES
-        (0, 'Manager'),
-        (1, 'Supervisor'),
-        (2, 'Senior Worker'),
-        (3, 'Worker');
-
-    CREATE OR REPLACE TABLE users_profiles (
+       CREATE OR REPLACE TABLE users_profiles (
                                                profile_id INT,
                                                employee_id INT,
                                                PRIMARY KEY (profile_id, employee_id),
@@ -139,6 +132,30 @@ BEGIN
                                     expiration_date DATE
     );
 
+
+    INSERT INTO profiles (profile_id, profile_name)
+    VALUES
+        (0, 'Manager'),
+        (1, 'Supervisor'),
+        (2, 'Senior Worker'),
+        (3, 'Worker');
+
+    INSERT INTO order_status (status_id, status_name)
+    VALUES
+        (1, 'pending'),
+        (2, 'completed'),
+        (3, 'canceled'),
+        (4, 'error');
+
+    INSERT INTO warehouses (warehouse_name)
+    VALUES
+        ('Magazyn surowców'),
+        ('Magazyn produkcyjny'),
+        ('Magazyn gotowych produktów');
+
 END //
 
 DELIMITER ;
+
+truncate table employee_hierarchy
+truncate table employees

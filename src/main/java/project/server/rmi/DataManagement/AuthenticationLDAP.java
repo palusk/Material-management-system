@@ -1,9 +1,6 @@
 package project.server.rmi.DataManagement;
 
-import javax.naming.AuthenticationException;
-import javax.naming.Context;
-import javax.naming.NamingEnumeration;
-import javax.naming.NamingException;
+import javax.naming.*;
 import javax.naming.directory.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +13,7 @@ public class AuthenticationLDAP {
     public AuthenticationLDAP() {
         Properties env = new Properties();
         env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-        env.put(Context.PROVIDER_URL, "ldap://192.168.1.42:10389");
+        env.put(Context.PROVIDER_URL, "ldap://192.168.40.156:10389");
         env.put(Context.SECURITY_PRINCIPAL, "uid=admin, ou=system");
         env.put(Context.SECURITY_CREDENTIALS, "secret");
         try {
@@ -191,13 +188,16 @@ public class AuthenticationLDAP {
             try {
                 Properties env = new Properties();
                 env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-                env.put(Context.PROVIDER_URL, "ldap://192.168.1.42:10389");
+                env.put(Context.PROVIDER_URL, "ldap://192.168.40.156:10389");
                 env.put(Context.SECURITY_PRINCIPAL, "mail=" + mail + ",ou=users,ou=system");
                 env.put(Context.SECURITY_CREDENTIALS, password);
                 DirContext con = new InitialDirContext(env);
                 System.out.println("LDAP authentication succeeded");
                 con.close();
                 return "Authorized";
+            } catch (CommunicationException e) {
+                System.out.println("Error connecting to LDAP server: " + e.getMessage());
+                return "Error";
             } catch (NamingException e) {
                 System.out.println("LDAP authentication failed: " + e.getMessage());
                 return "NonAuthorized";

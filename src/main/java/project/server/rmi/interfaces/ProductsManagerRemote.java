@@ -12,4 +12,5 @@ public interface ProductsManagerRemote extends Remote {
     String completeOrder(String orderID) throws RemoteException;
     List<String> getAllWarehouses() throws RemoteException;
     List<String> getAllWarehousesWithIgnore(String ignoreString, int employeeType) throws RemoteException;
+    String getOrderStatus(int orderID) throws RemoteException;
 }

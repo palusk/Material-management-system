@@ -217,4 +217,15 @@ BEGIN
 
 END//
 
+
+CREATE OR REPLACE PROCEDURE getOrderStatus(
+    IN p_order_id INT
+)
+BEGIN
+    SELECT os.status_name
+        FROM pending_orders po
+        JOIN order_status os on os.status_id = po.status_id
+    WHERE po.order_id = p_order_id;
+END //
+
 DELIMITER ;

@@ -77,6 +77,7 @@ public class HierarchyManager {
                 check = true;
             }else {
                 ldap.deleteUser(element);
+                //TODO dodac usunioecie z bazy duplikatow
             }
         }
         if(check) {System.out.println("New users have been added to the LDAP server successful!");}

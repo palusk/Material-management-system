@@ -60,4 +60,8 @@ public class ProductsManager {
         }
     }
 
+    public static String getOrderStatus(int orderID) {
+        return new Connector().callStoredProcedure("getOrderStatus",  new Object[]{orderID}, true,false);
+    }
+
 }

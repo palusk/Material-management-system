@@ -43,6 +43,11 @@ BEGIN
     DECLARE startIndex INT DEFAULT 1;
     DECLARE nextIndex INT;
 
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+        BEGIN
+            ROLLBACK;
+        END;
+
     -- Rozpoczęcie transakcji
     START TRANSACTION;
 
@@ -232,6 +237,13 @@ BEGIN
         FROM pending_orders po
         JOIN order_status os on os.status_id = po.status_id
     WHERE po.order_id = p_order_id;
+END //
+
+CREATE OR REPLACE PROCEDURE getAllOrders(
+)
+BEGIN
+    SELECT *
+    FROM pending_orders;
 END //
 
 DELIMITER ;

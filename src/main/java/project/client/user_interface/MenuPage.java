@@ -24,7 +24,7 @@ public class MenuPage {
         Button userPageButton = new Button("Go to User Page");
         userPageButton.setOnAction(e -> windowManager.showUserPage());
         BorderPane.setAlignment(userPageButton, javafx.geometry.Pos.CENTER);
-        pane.setTop(userPageButton);
+        pane.setLeft(userPageButton);
 
         Button adminPageButton = new Button("Go to Admin Page");
         adminPageButton.setDisable(true);
@@ -49,7 +49,7 @@ public class MenuPage {
         Button loginPageButton = new Button("Logout");
         loginPageButton.setOnAction(e -> handleLogoutButton());
         BorderPane.setAlignment(loginPageButton, javafx.geometry.Pos.CENTER);
-        pane.setBottom(loginPageButton);
+        pane.setRight(loginPageButton);
     }
 
     private void handleLogoutButton() {

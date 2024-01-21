@@ -107,6 +107,11 @@ BEGIN
     DECLARE v_load_status VARCHAR(20);
     DECLARE v_error_message VARCHAR(255);
 
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+        BEGIN
+            ROLLBACK;
+        END;
+
     START TRANSACTION;
 
     SELECT COUNT(*) INTO v_warehouse_exists
@@ -162,6 +167,11 @@ BEGIN
 
     -- Declare continue handler for the cursor
     DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+        BEGIN
+            ROLLBACK;
+        END;
 
     -- Start a transaction
     START TRANSACTION;

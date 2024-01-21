@@ -75,6 +75,12 @@ BEGIN
     FROM employees;
 END //
 
+CREATE OR REPLACE PROCEDURE getAllEmployeesAdmin()
+BEGIN
+    SELECT *
+    FROM employees;
+END //
+
 CREATE OR REPLACE PROCEDURE getDataForLDAP()
 BEGIN
     SELECT e.first_name, e.last_name, e.email, up.profile_id

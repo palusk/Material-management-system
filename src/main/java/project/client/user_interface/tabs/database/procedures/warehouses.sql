@@ -6,6 +6,12 @@ BEGIN
     FROM warehouses;
 END //
 
+CREATE OR REPLACE PROCEDURE GetAllWarehousesAdmin()
+BEGIN
+    SELECT *
+    FROM warehouses;
+END //
+
 CREATE OR REPLACE PROCEDURE GetAllWarehousesWithIgnore(
     IN p_login_user Varchar(50)
 )

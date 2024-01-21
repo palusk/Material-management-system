@@ -86,6 +86,11 @@ CREATE OR REPLACE PROCEDURE LoadRowIntoEmployees(
 BEGIN
     DECLARE v_warehouse_exists INT;
 
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+        BEGIN
+            ROLLBACK;
+        END;
+
     START TRANSACTION;
 
     SELECT COUNT(*) INTO v_warehouse_exists
@@ -139,6 +144,11 @@ BEGIN
 
     -- Declare continue handler for the cursor
     DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+        BEGIN
+            ROLLBACK;
+        END;
 
     -- Start a transaction
     START TRANSACTION;

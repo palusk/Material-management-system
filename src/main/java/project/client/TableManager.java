@@ -26,7 +26,7 @@ public class TableManager {
         tableView.getItems().clear();
         tableView.getColumns().clear();
         ObservableList<ObservableList<String>> data = parseData(tableData);
-
+        System.out.println(tableView.getColumns());
         if (data.isEmpty() || data.get(0).isEmpty()) {
             addNoDataColumn(tableView);
         } else {

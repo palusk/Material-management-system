@@ -13,7 +13,7 @@ public class AuthenticationLDAP {
     public AuthenticationLDAP() {
         Properties env = new Properties();
         env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-        env.put(Context.PROVIDER_URL, "ldap://192.168.40.156:10389");
+        env.put(Context.PROVIDER_URL, "ldap://192.168.43.29:10389");
         env.put(Context.SECURITY_PRINCIPAL, "uid=admin, ou=system");
         env.put(Context.SECURITY_CREDENTIALS, "secret");
         try {
@@ -188,7 +188,7 @@ public class AuthenticationLDAP {
             try {
                 Properties env = new Properties();
                 env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-                env.put(Context.PROVIDER_URL, "ldap://192.168.40.156:10389");
+                env.put(Context.PROVIDER_URL, "ldap://192.168.43.29:10389");
                 env.put(Context.SECURITY_PRINCIPAL, "mail=" + mail + ",ou=users,ou=system");
                 env.put(Context.SECURITY_CREDENTIALS, password);
                 DirContext con = new InitialDirContext(env);
